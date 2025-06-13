@@ -27,25 +27,8 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "PipelineExpression",
-            "left": {
-              "$type": "AssignmentExpression",
-              "left": {
-                "$type": "BinaryExpression",
-                "left": {
-                  "$type": "UnaryExpression",
-                  "expression": {
-                    "$type": "PostfixExpression",
-                    "base": {
-                      "$type": "StringLiteral",
-                      "value": "Hello, World!",
-                    },
-                    "postfixes": [],
-                  },
-                },
-              },
-            },
-            "rights": [],
+            "$type": "StringLiteral",
+            "text": "Hello, World!",
           },
         },
       ]
@@ -62,25 +45,8 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "PipelineExpression",
-            "left": {
-              "$type": "AssignmentExpression",
-              "left": {
-                "$type": "BinaryExpression",
-                "left": {
-                  "$type": "UnaryExpression",
-                  "expression": {
-                    "$type": "PostfixExpression",
-                    "base": {
-                      "$type": "NumberLiteral",
-                      "value": "123",
-                    },
-                    "postfixes": [],
-                  },
-                },
-              },
-            },
-            "rights": [],
+            "$type": "NumberLiteral",
+            "text": "123",
           },
         },
       ]
@@ -89,7 +55,7 @@ describe("Parsing tests", () => {
 
   it("parses boolean literal true", async () => {
     const statements = await snapshotTest(`
-        true
+        true;
     `);
 
     expect(statements).toMatchInlineSnapshot(`
@@ -97,25 +63,8 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "PipelineExpression",
-            "left": {
-              "$type": "AssignmentExpression",
-              "left": {
-                "$type": "BinaryExpression",
-                "left": {
-                  "$type": "UnaryExpression",
-                  "expression": {
-                    "$type": "PostfixExpression",
-                    "base": {
-                      "$type": "BooleanLiteral",
-                      "value": "true",
-                    },
-                    "postfixes": [],
-                  },
-                },
-              },
-            },
-            "rights": [],
+            "$type": "BooleanLiteral",
+            "text": "true",
           },
         },
       ]
@@ -124,7 +73,7 @@ describe("Parsing tests", () => {
 
   it("parses boolean literal false", async () => {
     const statements = await snapshotTest(`
-        false
+        false;
     `);
 
     expect(statements).toMatchInlineSnapshot(`
@@ -132,25 +81,8 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "PipelineExpression",
-            "left": {
-              "$type": "AssignmentExpression",
-              "left": {
-                "$type": "BinaryExpression",
-                "left": {
-                  "$type": "UnaryExpression",
-                  "expression": {
-                    "$type": "PostfixExpression",
-                    "base": {
-                      "$type": "BooleanLiteral",
-                      "value": "false",
-                    },
-                    "postfixes": [],
-                  },
-                },
-              },
-            },
-            "rights": [],
+            "$type": "BooleanLiteral",
+            "text": "false",
           },
         },
       ]
@@ -167,89 +99,21 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "PipelineExpression",
-            "left": {
-              "$type": "AssignmentExpression",
-              "left": {
-                "$type": "BinaryExpression",
-                "left": {
-                  "$type": "UnaryExpression",
-                  "expression": {
-                    "$type": "PostfixExpression",
-                    "base": {
-                      "$type": "ArrayLiteral",
-                      "elements": [
-                        {
-                          "$type": "PipelineExpression",
-                          "left": {
-                            "$type": "AssignmentExpression",
-                            "left": {
-                              "$type": "BinaryExpression",
-                              "left": {
-                                "$type": "UnaryExpression",
-                                "expression": {
-                                  "$type": "PostfixExpression",
-                                  "base": {
-                                    "$type": "NumberLiteral",
-                                    "value": "1",
-                                  },
-                                  "postfixes": [],
-                                },
-                              },
-                            },
-                          },
-                          "rights": [],
-                        },
-                        {
-                          "$type": "PipelineExpression",
-                          "left": {
-                            "$type": "AssignmentExpression",
-                            "left": {
-                              "$type": "BinaryExpression",
-                              "left": {
-                                "$type": "UnaryExpression",
-                                "expression": {
-                                  "$type": "PostfixExpression",
-                                  "base": {
-                                    "$type": "NumberLiteral",
-                                    "value": "2",
-                                  },
-                                  "postfixes": [],
-                                },
-                              },
-                            },
-                          },
-                          "rights": [],
-                        },
-                        {
-                          "$type": "PipelineExpression",
-                          "left": {
-                            "$type": "AssignmentExpression",
-                            "left": {
-                              "$type": "BinaryExpression",
-                              "left": {
-                                "$type": "UnaryExpression",
-                                "expression": {
-                                  "$type": "PostfixExpression",
-                                  "base": {
-                                    "$type": "NumberLiteral",
-                                    "value": "3",
-                                  },
-                                  "postfixes": [],
-                                },
-                              },
-                            },
-                          },
-                          "rights": [],
-                        },
-                      ],
-                    },
-                    "postfixes": [],
-                  },
-                },
+            "$type": "ArrayLiteral",
+            "elements": [
+              {
+                "$type": "NumberLiteral",
+                "text": "1",
               },
-            },
-            "rights": [],
+              {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+              {
+                "$type": "NumberLiteral",
+                "text": "3",
+              },
+            ],
           },
         },
       ]
@@ -266,82 +130,31 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "PipelineExpression",
-            "left": {
-              "$type": "AssignmentExpression",
-              "left": {
-                "$type": "BinaryExpression",
-                "left": {
-                  "$type": "UnaryExpression",
-                  "expression": {
-                    "$type": "PostfixExpression",
-                    "base": {
-                      "$type": "ObjectLiteral",
-                      "properties": [
-                        {
-                          "$type": "PropertyAssignment",
-                          "name": {
-                            "$type": "Identifier",
-                            "name": "name",
-                          },
-                          "value": {
-                            "$type": "PipelineExpression",
-                            "left": {
-                              "$type": "AssignmentExpression",
-                              "left": {
-                                "$type": "BinaryExpression",
-                                "left": {
-                                  "$type": "UnaryExpression",
-                                  "expression": {
-                                    "$type": "PostfixExpression",
-                                    "base": {
-                                      "$type": "StringLiteral",
-                                      "value": "John",
-                                    },
-                                    "postfixes": [],
-                                  },
-                                },
-                              },
-                            },
-                            "rights": [],
-                          },
-                        },
-                        {
-                          "$type": "PropertyAssignment",
-                          "name": {
-                            "$type": "Identifier",
-                            "name": "age",
-                          },
-                          "value": {
-                            "$type": "PipelineExpression",
-                            "left": {
-                              "$type": "AssignmentExpression",
-                              "left": {
-                                "$type": "BinaryExpression",
-                                "left": {
-                                  "$type": "UnaryExpression",
-                                  "expression": {
-                                    "$type": "PostfixExpression",
-                                    "base": {
-                                      "$type": "NumberLiteral",
-                                      "value": "30",
-                                    },
-                                    "postfixes": [],
-                                  },
-                                },
-                              },
-                            },
-                            "rights": [],
-                          },
-                        },
-                      ],
-                    },
-                    "postfixes": [],
-                  },
+            "$type": "ObjectLiteral",
+            "properties": [
+              {
+                "$type": "Property",
+                "key": {
+                  "$type": "Identifier",
+                  "id": "name",
+                },
+                "value": {
+                  "$type": "StringLiteral",
+                  "text": "John",
                 },
               },
-            },
-            "rights": [],
+              {
+                "$type": "Property",
+                "key": {
+                  "$type": "Identifier",
+                  "id": "age",
+                },
+                "value": {
+                  "$type": "NumberLiteral",
+                  "text": "30",
+                },
+              },
+            ],
           },
         },
       ]
@@ -359,93 +172,46 @@ describe("Parsing tests", () => {
       [
         {
           "$type": "FunctionDeclaration",
-          "body": {
+          "block": {
             "$type": "Block",
             "statements": [
               {
                 "$type": "ReturnStatement",
                 "expression": {
-                  "$type": "PipelineExpression",
+                  "$type": "BinaryExpression",
                   "left": {
-                    "$type": "AssignmentExpression",
-                    "left": {
-                      "$type": "BinaryExpression",
-                      "left": {
-                        "$type": "UnaryExpression",
-                        "expression": {
-                          "$type": "PostfixExpression",
-                          "base": {
-                            "$type": "StringLiteral",
-                            "value": "Hello, ",
-                          },
-                          "postfixes": [],
-                        },
-                      },
-                      "operator": "+",
-                      "right": {
-                        "$type": "UnaryExpression",
-                        "expression": {
-                          "$type": "PostfixExpression",
-                          "base": {
-                            "$type": "Identifier",
-                            "name": "name",
-                          },
-                          "postfixes": [],
-                        },
-                      },
-                    },
+                    "$type": "StringLiteral",
+                    "text": "Hello, ",
                   },
-                  "rights": [],
+                  "operator": "+",
+                  "right": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
                 },
               },
             ],
           },
-          "name": "greet",
+          "name": {
+            "$type": "Identifier",
+            "id": "greet",
+          },
           "parameters": [
             {
-              "$type": "Parameter",
-              "name": "name",
-              "typeAnnotation": {
-                "$type": "TypeAnnotation",
-                "type": {
-                  "$type": "UnionType",
-                  "types": [
-                    {
-                      "$type": "IntersectionType",
-                      "types": [
-                        {
-                          "$type": "PostfixType",
-                          "base": {
-                            "$type": "StringType",
-                          },
-                          "postfixes": [],
-                        },
-                      ],
-                    },
-                  ],
-                },
+              "$type": "ParameterDeclaration",
+              "name": {
+                "$type": "Identifier",
+                "id": "name",
+              },
+              "type": {
+                "$type": "PrimitiveType",
+                "name": "string",
               },
             },
           ],
           "returnType": {
-            "$type": "TypeAnnotation",
-            "type": {
-              "$type": "UnionType",
-              "types": [
-                {
-                  "$type": "IntersectionType",
-                  "types": [
-                    {
-                      "$type": "PostfixType",
-                      "base": {
-                        "$type": "StringType",
-                      },
-                      "postfixes": [],
-                    },
-                  ],
-                },
-              ],
-            },
+            "$type": "PrimitiveType",
+            "name": "string",
           },
         },
       ]
@@ -455,7 +221,7 @@ describe("Parsing tests", () => {
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
-    expect(checkDocumentValid(document)).toBeUndefined();
+    expect(checkDocumentValid(document)).toBe(undefined);
 
     return document.parseResult.value.statements.map(
       recursivelyRemoveCircularReferences
