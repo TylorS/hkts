@@ -1,0 +1,15 @@
+{
+    "projectName": "HigherKindedTypeScript",
+    "languages": [{
+        "id": "hkts",
+        "grammar": "src/language/hkts.langium",
+        "fileExtensions": [".hkts"],
+        "textMate": {
+            "out": "syntaxes/hkts.tmLanguage.json"
+        },
+        "monarch": {
+            "out": "src/syntaxes/hkts.monarch.ts"
+        }
+    }],
+    "out": "src/language/generated"
+}
