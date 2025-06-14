@@ -2309,7 +2309,7 @@ describe("Parsing tests", () => {
     it("parses function parameter with function type", async () => {
       const statements = await snapshotTest(`
         fun applyOperation(op: (Number, Number) => Number, x: Number, y: Number): Number {
-          return x;
+          return op(x, y);
         }
       `);
 
@@ -2323,8 +2323,21 @@ describe("Parsing tests", () => {
                 {
                   "$type": "ReturnStatement",
                   "expression": {
-                    "$type": "Identifier",
-                    "id": "x",
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "Identifier",
+                        "id": "x",
+                      },
+                      {
+                        "$type": "Identifier",
+                        "id": "y",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "Identifier",
+                      "id": "op",
+                    },
                   },
                 },
               ],
@@ -2391,6 +2404,141 @@ describe("Parsing tests", () => {
             "returnType": {
               "$type": "PrimitiveType",
               "name": "Number",
+            },
+          },
+        ]
+      `);
+         });
+   });
+
+  describe("Call Expressions", () => {
+    it("parses simple function call", async () => {
+      const statements = await snapshotTest(`
+        add(1, 2);
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "CallExpression",
+              "arguments": [
+                {
+                  "$type": "NumberLiteral",
+                  "text": "1",
+                },
+                {
+                  "$type": "NumberLiteral",
+                  "text": "2",
+                },
+              ],
+              "callee": {
+                "$type": "Identifier",
+                "id": "add",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function call with no arguments", async () => {
+      const statements = await snapshotTest(`
+        getValue();
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "CallExpression",
+              "arguments": [],
+              "callee": {
+                "$type": "Identifier",
+                "id": "getValue",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function call with single argument", async () => {
+      const statements = await snapshotTest(`
+        square(5);
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "CallExpression",
+              "arguments": [
+                {
+                  "$type": "NumberLiteral",
+                  "text": "5",
+                },
+              ],
+              "callee": {
+                "$type": "Identifier",
+                "id": "square",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses nested function calls", async () => {
+      const statements = await snapshotTest(`
+        add(multiply(2, 3), square(4));
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "CallExpression",
+              "arguments": [
+                {
+                  "$type": "CallExpression",
+                  "arguments": [
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "2",
+                    },
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "3",
+                    },
+                  ],
+                  "callee": {
+                    "$type": "Identifier",
+                    "id": "multiply",
+                  },
+                },
+                {
+                  "$type": "CallExpression",
+                  "arguments": [
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "4",
+                    },
+                  ],
+                  "callee": {
+                    "$type": "Identifier",
+                    "id": "square",
+                  },
+                },
+              ],
+              "callee": {
+                "$type": "Identifier",
+                "id": "add",
+              },
             },
           },
         ]

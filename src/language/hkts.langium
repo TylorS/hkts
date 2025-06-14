@@ -152,7 +152,14 @@ PrimaryExpression:
     Identifier |
     ArrayLiteral |
     ObjectLiteral |
-    FunctionExpression;
+    FunctionExpression |
+    CallExpression;
+
+// =============================================
+// Call Expression
+// =============================================
+CallExpression:
+    callee=Identifier "(" (arguments+=Expression ("," arguments+=Expression)*)? ")";
 
 // =============================================
 // Function Expression
