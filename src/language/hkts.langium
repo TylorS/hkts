@@ -180,6 +180,7 @@ PrimaryExpression:
     FunctionExpression |
     CallExpression |
     MemberExpression |
+    MatchExpression |
     "(" Expression ")";
 
 // =============================================
@@ -208,6 +209,60 @@ FunctionExpression:
         ("=>" body=Expression) |
         body=Block
     );
+
+// =============================================
+// Match Expression & Patterns
+// =============================================
+MatchExpression:
+    "match" "(" target=Expression ")" "{" (cases+=MatchCase)* "}";
+
+MatchCase:
+    pattern=Pattern (guard=GuardExpression)? "=>" (body=Expression ";" | body=Block);
+
+GuardExpression:
+    "if" condition=Expression;
+
+Pattern:
+    TypedPattern;
+
+TypedPattern:
+    BasePattern ({infer TypedPattern.pattern=current} ":" type=Type)?;
+
+BasePattern:
+    PrimaryPattern;
+
+PrimaryPattern:
+    ArrayPattern |
+    ObjectPattern |
+    WildcardPattern |
+    LiteralPattern |
+    ConstructorPattern |
+    VariablePattern |
+    "(" Pattern ")";
+
+WildcardPattern:
+    text="_";
+
+LiteralPattern:
+    value=Literal;
+
+ArrayPattern:
+    "[]" |
+    "[" (patterns+=Pattern ("," patterns+=Pattern)*)? ("," "..." restPattern=Identifier)? "]";
+
+ObjectPattern:
+    "{" (fields+=FieldPattern ("," fields+=FieldPattern)*)? ("," "..." restPattern=Identifier)? "}";
+
+ConstructorPattern:
+    constructor=Identifier "(" (patterns+=Pattern ("," patterns+=Pattern)*)? ")" |
+    constructor=Identifier pattern=ObjectPattern;
+
+VariablePattern:
+    name=Identifier;
+
+FieldPattern:
+    field=Identifier ":" pattern=Pattern |
+    field=Identifier;
 
 // =============================================
 // Literals
@@ -248,7 +303,7 @@ ObjectLiteral:
     "{" (properties+=Property ("," properties+=Property)*)? "}";
 
 Property:
-    key=Identifier ":" value=Expression;
+    key=Identifier (":" value=Expression)?;
 
 // =============================================
 // Types

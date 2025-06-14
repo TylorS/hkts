@@ -285,7 +285,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses subtraction", async () => {
@@ -314,7 +314,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses multiplication", async () => {
@@ -343,7 +343,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses division", async () => {
@@ -372,7 +372,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses equality", async () => {
@@ -401,7 +401,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses inequality", async () => {
@@ -430,7 +430,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses less than", async () => {
@@ -462,7 +462,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses greater than", async () => {
@@ -494,7 +494,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses less than or equal to", async () => {
@@ -526,7 +526,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses greater than or equal to", async () => {
@@ -558,7 +558,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
 
     it("parses multiple binary expressions", async () => {
@@ -598,7 +598,7 @@ describe("Parsing tests", () => {
             },
           },
         ]
-      `)
+      `);
     });
   });
 
@@ -1955,7 +1955,7 @@ describe("Parsing tests", () => {
         ]
       `);
     });
-    });
+  });
 
   describe("Function Types", () => {
     it("parses function type without parameter names", async () => {
@@ -2534,8 +2534,8 @@ describe("Parsing tests", () => {
           },
         ]
       `);
-         });
-   });
+    });
+  });
 
   describe("Call Expressions", () => {
     it("parses simple function call", async () => {
@@ -2669,8 +2669,8 @@ describe("Parsing tests", () => {
           },
         ]
       `);
-         });
-   });
+    });
+  });
 
   describe("Member Expressions", () => {
     it("parses dot notation member access", async () => {
@@ -2837,7 +2837,7 @@ describe("Parsing tests", () => {
       `);
     });
 
-    it('parses member expression function call', async () => { 
+    it("parses member expression function call", async () => {
       const statements = await snapshotTest(`
         user.greet("Hello");
       `);
@@ -2869,7 +2869,7 @@ describe("Parsing tests", () => {
           },
         ]
       `);
-    })
+    });
   });
 
   describe("Array Types (Postfix)", () => {
@@ -4671,6 +4671,1370 @@ describe("Parsing tests", () => {
             "name": {
               "$type": "Identifier",
               "id": "Option",
+            },
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("Pattern Matching", () => {
+    it("parses simple match expression with literal patterns", async () => {
+      const statements = await snapshotTest(`
+        match (x) {
+          1 => "one";
+          2 => "two";
+          _ => "other";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "one",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "IntegerLiteral",
+                      "text": "1",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "two",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "IntegerLiteral",
+                      "text": "2",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "other",
+                  },
+                  "pattern": {
+                    "$type": "WildcardPattern",
+                    "text": "_",
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with variable patterns", async () => {
+      const statements = await snapshotTest(`
+        match (value) {
+          n => n + 1;
+          _ => 0;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "n",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "IntegerLiteral",
+                      "text": "1",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "VariablePattern",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "n",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "IntegerLiteral",
+                    "text": "0",
+                  },
+                  "pattern": {
+                    "$type": "WildcardPattern",
+                    "text": "_",
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "value",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with constructor patterns", async () => {
+      const statements = await snapshotTest(`
+        match (shape) {
+          Circle(radius) => radius * 2;
+          Rectangle(width, height) => width * height;
+          Point => 0;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "radius",
+                    },
+                    "operator": {
+                      "$type": "MultiplicationOperator",
+                      "text": "*",
+                    },
+                    "right": {
+                      "$type": "IntegerLiteral",
+                      "text": "2",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Circle",
+                    },
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "radius",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "width",
+                    },
+                    "operator": {
+                      "$type": "MultiplicationOperator",
+                      "text": "*",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "height",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Rectangle",
+                    },
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "width",
+                        },
+                      },
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "height",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "IntegerLiteral",
+                    "text": "0",
+                  },
+                  "pattern": {
+                    "$type": "VariablePattern",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Point",
+                    },
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "shape",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with object constructor patterns", async () => {
+      const statements = await snapshotTest(`
+        match (person) {
+          Person{name: "John", age} => age;
+          Person{name, age: 25} => name;
+          Person{name} => name + " (unknown age)";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "Identifier",
+                    "id": "age",
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Person",
+                    },
+                    "pattern": {
+                      "$type": "ObjectPattern",
+                      "fields": [
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "name",
+                          },
+                          "pattern": {
+                            "$type": "LiteralPattern",
+                            "value": {
+                              "$type": "StringLiteral",
+                              "text": "John",
+                            },
+                          },
+                        },
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "age",
+                          },
+                        },
+                      ],
+                    },
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Person",
+                    },
+                    "pattern": {
+                      "$type": "ObjectPattern",
+                      "fields": [
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "name",
+                          },
+                        },
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "age",
+                          },
+                          "pattern": {
+                            "$type": "LiteralPattern",
+                            "value": {
+                              "$type": "IntegerLiteral",
+                              "text": "25",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "name",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "StringLiteral",
+                      "text": " (unknown age)",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Person",
+                    },
+                    "pattern": {
+                      "$type": "ObjectPattern",
+                      "fields": [
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "name",
+                          },
+                        },
+                      ],
+                    },
+                    "patterns": [],
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "person",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with array constructor patterns", async () => {
+      const statements = await snapshotTest(`
+        match (items) {
+          Array() => "empty";
+          Array(first) => first;
+          Array(first, second) => first + second;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "empty",
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Array",
+                    },
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "Identifier",
+                    "id": "first",
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Array",
+                    },
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "first",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "first",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "second",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Array",
+                    },
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "first",
+                        },
+                      },
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "second",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "items",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with object patterns", async () => {
+      const statements = await snapshotTest(`
+        match (obj) {
+          {x: 0, y: 0} => "origin";
+          {x, y} => x + y;
+          {name, ...props} => name;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "origin",
+                  },
+                  "pattern": {
+                    "$type": "ObjectPattern",
+                    "fields": [
+                      {
+                        "$type": "FieldPattern",
+                        "field": {
+                          "$type": "Identifier",
+                          "id": "x",
+                        },
+                        "pattern": {
+                          "$type": "LiteralPattern",
+                          "value": {
+                            "$type": "IntegerLiteral",
+                            "text": "0",
+                          },
+                        },
+                      },
+                      {
+                        "$type": "FieldPattern",
+                        "field": {
+                          "$type": "Identifier",
+                          "id": "y",
+                        },
+                        "pattern": {
+                          "$type": "LiteralPattern",
+                          "value": {
+                            "$type": "IntegerLiteral",
+                            "text": "0",
+                          },
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "x",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "y",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ObjectPattern",
+                    "fields": [
+                      {
+                        "$type": "FieldPattern",
+                        "field": {
+                          "$type": "Identifier",
+                          "id": "x",
+                        },
+                      },
+                      {
+                        "$type": "FieldPattern",
+                        "field": {
+                          "$type": "Identifier",
+                          "id": "y",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "pattern": {
+                    "$type": "ObjectPattern",
+                    "fields": [
+                      {
+                        "$type": "FieldPattern",
+                        "field": {
+                          "$type": "Identifier",
+                          "id": "name",
+                        },
+                      },
+                    ],
+                    "restPattern": {
+                      "$type": "Identifier",
+                      "id": "props",
+                    },
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "obj",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with array patterns", async () => {
+      const statements = await snapshotTest(`
+        match (items) {
+          [] => "empty";
+          [first] => first;
+          [first, second] => first + second;
+        }`);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "empty",
+                  },
+                  "pattern": {
+                    "$type": "ArrayPattern",
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "Identifier",
+                    "id": "first",
+                  },
+                  "pattern": {
+                    "$type": "ArrayPattern",
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "first",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "first",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "second",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ArrayPattern",
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "first",
+                        },
+                      },
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "second",
+                        },
+                      },
+                    ],
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "items",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with type patterns", async () => {
+      const statements = await snapshotTest(`
+        match (value) {
+          x: String => x + " is a string";
+          n: Number => n * 2;
+          _: Boolean => true;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "x",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "StringLiteral",
+                      "text": " is a string",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "TypedPattern",
+                    "pattern": {
+                      "$type": "VariablePattern",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "x",
+                      },
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "n",
+                    },
+                    "operator": {
+                      "$type": "MultiplicationOperator",
+                      "text": "*",
+                    },
+                    "right": {
+                      "$type": "IntegerLiteral",
+                      "text": "2",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "TypedPattern",
+                    "pattern": {
+                      "$type": "VariablePattern",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "n",
+                      },
+                    },
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BooleanLiteral",
+                    "text": "true",
+                  },
+                  "pattern": {
+                    "$type": "TypedPattern",
+                    "pattern": {
+                      "$type": "WildcardPattern",
+                      "text": "_",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "Boolean",
+                    },
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "value",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with guard expressions", async () => {
+      const statements = await snapshotTest(`
+        match (x) {
+          n if n > 0 => "positive";
+          n if n < 0 => "negative";
+          _ => "zero";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "positive",
+                  },
+                  "guard": {
+                    "$type": "GuardExpression",
+                    "condition": {
+                      "$type": "BinaryExpression",
+                      "left": {
+                        "$type": "Identifier",
+                        "id": "n",
+                      },
+                      "operator": {
+                        "$type": "ComparisonOperator",
+                        "operator": {
+                          "$type": "GreaterThanOperator",
+                          "text": ">",
+                        },
+                      },
+                      "right": {
+                        "$type": "IntegerLiteral",
+                        "text": "0",
+                      },
+                    },
+                  },
+                  "pattern": {
+                    "$type": "VariablePattern",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "n",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "negative",
+                  },
+                  "guard": {
+                    "$type": "GuardExpression",
+                    "condition": {
+                      "$type": "BinaryExpression",
+                      "left": {
+                        "$type": "Identifier",
+                        "id": "n",
+                      },
+                      "operator": {
+                        "$type": "ComparisonOperator",
+                        "operator": {
+                          "$type": "LessThanOperator",
+                          "text": "<",
+                        },
+                      },
+                      "right": {
+                        "$type": "IntegerLiteral",
+                        "text": "0",
+                      },
+                    },
+                  },
+                  "pattern": {
+                    "$type": "VariablePattern",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "n",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "zero",
+                  },
+                  "pattern": {
+                    "$type": "WildcardPattern",
+                    "text": "_",
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses complex match expression with mixed patterns", async () => {
+      const statements = await snapshotTest(`
+        match (result) {
+          Success{value: x} if x > 100 => "big success";
+          Success{value} => "success: " + value;
+          Error{message: msg} => "error: " + msg;
+          _ => "unknown";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "big success",
+                  },
+                  "guard": {
+                    "$type": "GuardExpression",
+                    "condition": {
+                      "$type": "BinaryExpression",
+                      "left": {
+                        "$type": "Identifier",
+                        "id": "x",
+                      },
+                      "operator": {
+                        "$type": "ComparisonOperator",
+                        "operator": {
+                          "$type": "GreaterThanOperator",
+                          "text": ">",
+                        },
+                      },
+                      "right": {
+                        "$type": "IntegerLiteral",
+                        "text": "100",
+                      },
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Success",
+                    },
+                    "pattern": {
+                      "$type": "ObjectPattern",
+                      "fields": [
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "value",
+                          },
+                          "pattern": {
+                            "$type": "VariablePattern",
+                            "name": {
+                              "$type": "Identifier",
+                              "id": "x",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "StringLiteral",
+                      "text": "success: ",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "value",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Success",
+                    },
+                    "pattern": {
+                      "$type": "ObjectPattern",
+                      "fields": [
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "value",
+                          },
+                        },
+                      ],
+                    },
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "StringLiteral",
+                      "text": "error: ",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "msg",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Error",
+                    },
+                    "pattern": {
+                      "$type": "ObjectPattern",
+                      "fields": [
+                        {
+                          "$type": "FieldPattern",
+                          "field": {
+                            "$type": "Identifier",
+                            "id": "message",
+                          },
+                          "pattern": {
+                            "$type": "VariablePattern",
+                            "name": {
+                              "$type": "Identifier",
+                              "id": "msg",
+                            },
+                          },
+                        },
+                      ],
+                    },
+                    "patterns": [],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "unknown",
+                  },
+                  "pattern": {
+                    "$type": "WildcardPattern",
+                    "text": "_",
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "result",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses nested match expressions", async () => {
+      const statements = await snapshotTest(`
+        match (outer) {
+          Some(inner) => match (inner) {
+            1 => "found one";
+            n => "found " + n;
+          };
+          None => "nothing";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "MatchExpression",
+                    "cases": [
+                      {
+                        "$type": "MatchCase",
+                        "body": {
+                          "$type": "StringLiteral",
+                          "text": "found one",
+                        },
+                        "pattern": {
+                          "$type": "LiteralPattern",
+                          "value": {
+                            "$type": "IntegerLiteral",
+                            "text": "1",
+                          },
+                        },
+                      },
+                      {
+                        "$type": "MatchCase",
+                        "body": {
+                          "$type": "BinaryExpression",
+                          "left": {
+                            "$type": "StringLiteral",
+                            "text": "found ",
+                          },
+                          "operator": {
+                            "$type": "AdditionOperator",
+                            "text": "+",
+                          },
+                          "right": {
+                            "$type": "Identifier",
+                            "id": "n",
+                          },
+                        },
+                        "pattern": {
+                          "$type": "VariablePattern",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "n",
+                          },
+                        },
+                      },
+                    ],
+                    "target": {
+                      "$type": "Identifier",
+                      "id": "inner",
+                    },
+                  },
+                  "pattern": {
+                    "$type": "ConstructorPattern",
+                    "constructor": {
+                      "$type": "Identifier",
+                      "id": "Some",
+                    },
+                    "patterns": [
+                      {
+                        "$type": "VariablePattern",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "inner",
+                        },
+                      },
+                    ],
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "nothing",
+                  },
+                  "pattern": {
+                    "$type": "VariablePattern",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "None",
+                    },
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "outer",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with boolean literal patterns", async () => {
+      const statements = await snapshotTest(`
+        match (flag) {
+          true => "yes";
+          false => "no";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "yes",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "BooleanLiteral",
+                      "text": "true",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "StringLiteral",
+                    "text": "no",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "BooleanLiteral",
+                      "text": "false",
+                    },
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "flag",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses match expression with string literal patterns", async () => {
+      const statements = await snapshotTest(`
+        match (status) {
+          "pending" => 0;
+          "running" => 1;
+          "complete" => 2;
+          other => 3;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MatchExpression",
+              "cases": [
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "IntegerLiteral",
+                    "text": "0",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "StringLiteral",
+                      "text": "pending",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "IntegerLiteral",
+                    "text": "1",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "StringLiteral",
+                      "text": "running",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "IntegerLiteral",
+                    "text": "2",
+                  },
+                  "pattern": {
+                    "$type": "LiteralPattern",
+                    "value": {
+                      "$type": "StringLiteral",
+                      "text": "complete",
+                    },
+                  },
+                },
+                {
+                  "$type": "MatchCase",
+                  "body": {
+                    "$type": "IntegerLiteral",
+                    "text": "3",
+                  },
+                  "pattern": {
+                    "$type": "VariablePattern",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "other",
+                    },
+                  },
+                },
+              ],
+              "target": {
+                "$type": "Identifier",
+                "id": "status",
+              },
             },
           },
         ]
