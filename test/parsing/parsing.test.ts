@@ -45,7 +45,7 @@ describe("Parsing tests", () => {
         {
           "$type": "ExpressionStatement",
           "expression": {
-            "$type": "NumberLiteral",
+            "$type": "IntegerLiteral",
             "text": "123",
           },
         },
@@ -89,6 +89,42 @@ describe("Parsing tests", () => {
     `);
   });
 
+  it("parses BigInt literal", async () => {
+    const statements = await snapshotTest(`
+        123n;
+    `);
+
+    expect(statements).toMatchInlineSnapshot(`
+      [
+        {
+          "$type": "ExpressionStatement",
+          "expression": {
+            "$type": "BigIntLiteral",
+            "text": "123n",
+          },
+        },
+      ]
+    `);
+  });
+
+  it("parses BigDecimal literal", async () => {
+    const statements = await snapshotTest(`
+        123.45n;
+    `);
+
+    expect(statements).toMatchInlineSnapshot(`
+      [
+        {
+          "$type": "ExpressionStatement",
+          "expression": {
+            "$type": "BigDecimalLiteral",
+            "text": "123.45n",
+          },
+        },
+      ]
+    `);
+  });
+
   it("parses array literal", async () => {
     const statements = await snapshotTest(`
         [1, 2, 3]
@@ -102,15 +138,15 @@ describe("Parsing tests", () => {
             "$type": "ArrayLiteral",
             "elements": [
               {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
               {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "3",
               },
             ],
@@ -150,7 +186,7 @@ describe("Parsing tests", () => {
                   "id": "age",
                 },
                 "value": {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "30",
                 },
               },
@@ -235,7 +271,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -243,7 +279,7 @@ describe("Parsing tests", () => {
                 "text": "+",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -264,7 +300,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -272,7 +308,7 @@ describe("Parsing tests", () => {
                 "text": "-",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -293,7 +329,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -301,7 +337,7 @@ describe("Parsing tests", () => {
                 "text": "*",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -322,7 +358,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -330,7 +366,7 @@ describe("Parsing tests", () => {
                 "text": "/",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -351,7 +387,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -359,7 +395,7 @@ describe("Parsing tests", () => {
                 "text": "==",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -380,7 +416,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -388,7 +424,7 @@ describe("Parsing tests", () => {
                 "text": "!=",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -409,7 +445,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -420,7 +456,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -441,7 +477,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -452,7 +488,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -473,7 +509,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -484,7 +520,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -505,7 +541,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -516,7 +552,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "2",
               },
             },
@@ -537,7 +573,7 @@ describe("Parsing tests", () => {
             "expression": {
               "$type": "BinaryExpression",
               "left": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
               "operator": {
@@ -547,7 +583,7 @@ describe("Parsing tests", () => {
               "right": {
                 "$type": "BinaryExpression",
                 "left": {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "2",
                 },
                 "operator": {
@@ -555,7 +591,7 @@ describe("Parsing tests", () => {
                   "text": "*",
                 },
                 "right": {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "3",
                 },
               },
@@ -589,7 +625,7 @@ describe("Parsing tests", () => {
                 {
                   "$type": "ReturnStatement",
                   "expression": {
-                    "$type": "NumberLiteral",
+                    "$type": "IntegerLiteral",
                     "text": "1",
                   },
                 },
@@ -627,7 +663,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "0",
               },
             },
@@ -691,7 +727,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "0",
               },
             },
@@ -712,7 +748,7 @@ describe("Parsing tests", () => {
                     },
                   },
                   "right": {
-                    "$type": "NumberLiteral",
+                    "$type": "IntegerLiteral",
                     "text": "0",
                   },
                 },
@@ -776,7 +812,7 @@ describe("Parsing tests", () => {
                 },
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "0",
               },
             },
@@ -812,7 +848,7 @@ describe("Parsing tests", () => {
                     },
                   },
                   "right": {
-                    "$type": "NumberLiteral",
+                    "$type": "IntegerLiteral",
                     "text": "0",
                   },
                 },
@@ -875,7 +911,7 @@ describe("Parsing tests", () => {
                 "text": "==",
               },
               "right": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "1",
               },
             },
@@ -908,7 +944,7 @@ describe("Parsing tests", () => {
                     "text": "==",
                   },
                   "right": {
-                    "$type": "NumberLiteral",
+                    "$type": "IntegerLiteral",
                     "text": "2",
                   },
                 },
@@ -938,7 +974,7 @@ describe("Parsing tests", () => {
                     "text": "==",
                   },
                   "right": {
-                    "$type": "NumberLiteral",
+                    "$type": "IntegerLiteral",
                     "text": "3",
                   },
                 },
@@ -990,7 +1026,7 @@ describe("Parsing tests", () => {
               "id": "x",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "42",
             },
           },
@@ -1029,15 +1065,15 @@ describe("Parsing tests", () => {
               "$type": "ArrayLiteral",
               "elements": [
                 {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "1",
                 },
                 {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "2",
                 },
                 {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "3",
                 },
               ],
@@ -1334,7 +1370,7 @@ describe("Parsing tests", () => {
               "id": "x",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "42",
             },
           },
@@ -1378,7 +1414,7 @@ describe("Parsing tests", () => {
               "id": "a",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "1",
             },
           },
@@ -1394,7 +1430,7 @@ describe("Parsing tests", () => {
               "id": "b",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "2",
             },
           },
@@ -1411,7 +1447,7 @@ describe("Parsing tests", () => {
               "id": "c",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "3",
             },
           },
@@ -1434,7 +1470,7 @@ describe("Parsing tests", () => {
               "id": "x",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "42",
             },
           },
@@ -1676,7 +1712,7 @@ describe("Parsing tests", () => {
             "value": {
               "$type": "FunctionExpression",
               "body": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "42",
               },
               "parameters": [],
@@ -1726,7 +1762,7 @@ describe("Parsing tests", () => {
                       "text": "+",
                     },
                     "right": {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "1",
                     },
                   },
@@ -1760,7 +1796,7 @@ describe("Parsing tests", () => {
                       "text": "*",
                     },
                     "right": {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "2",
                     },
                   },
@@ -2272,7 +2308,7 @@ describe("Parsing tests", () => {
             "value": {
               "$type": "FunctionExpression",
               "body": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "42",
               },
               "parameters": [],
@@ -2515,11 +2551,11 @@ describe("Parsing tests", () => {
               "$type": "CallExpression",
               "arguments": [
                 {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "1",
                 },
                 {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "2",
                 },
               ],
@@ -2568,7 +2604,7 @@ describe("Parsing tests", () => {
               "$type": "CallExpression",
               "arguments": [
                 {
-                  "$type": "NumberLiteral",
+                  "$type": "IntegerLiteral",
                   "text": "5",
                 },
               ],
@@ -2598,11 +2634,11 @@ describe("Parsing tests", () => {
                   "$type": "CallExpression",
                   "arguments": [
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "2",
                     },
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "3",
                     },
                   ],
@@ -2615,7 +2651,7 @@ describe("Parsing tests", () => {
                   "$type": "CallExpression",
                   "arguments": [
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "4",
                     },
                   ],
@@ -2703,7 +2739,7 @@ describe("Parsing tests", () => {
                 "id": "items",
               },
               "property": {
-                "$type": "NumberLiteral",
+                "$type": "IntegerLiteral",
                 "text": "0",
               },
             },
@@ -2910,11 +2946,11 @@ describe("Parsing tests", () => {
                   "$type": "ArrayLiteral",
                   "elements": [
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "1",
                     },
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "2",
                     },
                   ],
@@ -2923,11 +2959,11 @@ describe("Parsing tests", () => {
                   "$type": "ArrayLiteral",
                   "elements": [
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "3",
                     },
                     {
-                      "$type": "NumberLiteral",
+                      "$type": "IntegerLiteral",
                       "text": "4",
                     },
                   ],
@@ -3190,11 +3226,11 @@ describe("Parsing tests", () => {
               "id": "version",
             },
             "type": {
-              "$type": "NumberLiteralType",
+              "$type": "IntegerLiteralType",
               "text": "42",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "IntegerLiteral",
               "text": "42",
             },
           },
@@ -3217,12 +3253,66 @@ describe("Parsing tests", () => {
               "id": "pi",
             },
             "type": {
-              "$type": "NumberLiteralType",
+              "$type": "FloatLiteralType",
               "text": "3.14",
             },
             "value": {
-              "$type": "NumberLiteral",
+              "$type": "FloatLiteral",
               "text": "3.14",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses BigInt literal type", async () => {
+      const statements = await snapshotTest(`
+        let bigNum: 999n = 999n;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "bigNum",
+            },
+            "type": {
+              "$type": "BigIntLiteralType",
+              "text": "999n",
+            },
+            "value": {
+              "$type": "BigIntLiteral",
+              "text": "999n",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses BigDecimal literal type", async () => {
+      const statements = await snapshotTest(`
+        let bigDec: 123.456n = 123.456n;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "bigDec",
+            },
+            "type": {
+              "$type": "BigDecimalLiteralType",
+              "text": "123.456n",
+            },
+            "value": {
+              "$type": "BigDecimalLiteral",
+              "text": "123.456n",
             },
           },
         ]

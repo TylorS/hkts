@@ -215,7 +215,10 @@ Identifier:
 Literal:
     BooleanLiteral |
     StringLiteral |
-    NumberLiteral;
+    IntegerLiteral |
+    FloatLiteral |
+    BigIntLiteral |
+    BigDecimalLiteral;
 
 BooleanLiteral:
     text=BOOLEAN;
@@ -223,9 +226,17 @@ BooleanLiteral:
 StringLiteral:
     text=STRING;
 
-NumberLiteral:
-    text=NUMBER |
+IntegerLiteral:
+    text=INTEGER;
+
+FloatLiteral:
     text=FLOAT;
+
+BigIntLiteral:
+    text=BIGINT;
+
+BigDecimalLiteral:
+    text=BIGDECIMAL;
 
 ArrayLiteral:
     "[" (elements+=Expression ("," elements+=Expression)*)? "]";
@@ -266,7 +277,10 @@ PrimitiveType:
 LiteralType:
     BooleanLiteralType |
     StringLiteralType |
-    NumberLiteralType;
+    IntegerLiteralType |
+    FloatLiteralType |
+    BigIntLiteralType |
+    BigDecimalLiteralType;
 
 BooleanLiteralType:
     text=BOOLEAN;
@@ -274,9 +288,17 @@ BooleanLiteralType:
 StringLiteralType:
     text=STRING;
 
-NumberLiteralType:
-    text=NUMBER |
+IntegerLiteralType:
+    text=INTEGER;
+
+FloatLiteralType:
     text=FLOAT;
+
+BigIntLiteralType:
+    text=BIGINT;
+
+BigDecimalLiteralType:
+    text=BIGDECIMAL;
 
 ObjectType:
     "{" (properties+=PropertyType ("," properties+=PropertyType)*)? "}";
@@ -298,8 +320,10 @@ TypeReference:
 // =============================================
 terminal BOOLEAN: /true|false/;
 terminal STRING: /"[^"]*"/ | /'[^']*'/;
+terminal BIGDECIMAL: /[0-9]+\.[0-9]+n/;
+terminal BIGINT: /[0-9]+n/;
 terminal FLOAT: /[0-9]+\.[0-9]+/;
-terminal NUMBER: /[0-9]+/;
+terminal INTEGER: /[0-9]+/;
 terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
 terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;
 terminal MULTI_LINE_COMMENT: /\/\*[\s\S]*?\*\//;
