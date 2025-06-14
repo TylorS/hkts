@@ -163,7 +163,7 @@ describe("Parsing tests", () => {
 
   it("parses function declaration", async () => {
     const statements = await snapshotTest(`
-        fun greet(name: string): string {
+        fun greet(name: String): String {
             return "Hello, " + name;
         }
     `);
@@ -172,7 +172,6 @@ describe("Parsing tests", () => {
       [
         {
           "$type": "FunctionDeclaration",
-          "async": false,
           "block": {
             "$type": "Block",
             "statements": [
@@ -197,7 +196,6 @@ describe("Parsing tests", () => {
             ],
           },
           "exported": false,
-          "generator": false,
           "name": {
             "$type": "Identifier",
             "id": "greet",
@@ -211,13 +209,13 @@ describe("Parsing tests", () => {
               },
               "type": {
                 "$type": "PrimitiveType",
-                "name": "string",
+                "name": "String",
               },
             },
           ],
           "returnType": {
             "$type": "PrimitiveType",
-            "name": "string",
+            "name": "String",
           },
         },
       ]
@@ -1274,6 +1272,612 @@ describe("Parsing tests", () => {
             "value": {
               "$type": "Identifier",
               "id": "person",
+            },
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("comments", () => {
+    it("parses single line comment", async () => {
+      const statements = await snapshotTest(`
+        // This is a comment
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "Comment",
+            "text": "// This is a comment",
+          },
+        ]
+      `);
+    });
+
+    it("parses multiline comment", async () => {
+      const statements = await snapshotTest(`
+        /* This is a 
+           multiline comment */
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "MultiLineComment",
+            "text": "/* This is a 
+                   multiline comment */",
+          },
+        ]
+      `);
+    });
+
+    it("parses code with comments", async () => {
+      const statements = await snapshotTest(`
+        // Variable declaration
+        let x = 42;
+        /* Another comment */
+        let y = "hello";
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "Comment",
+            "text": "// Variable declaration",
+          },
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "x",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "42",
+            },
+          },
+          {
+            "$type": "MultiLineComment",
+            "text": "/* Another comment */",
+          },
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "y",
+            },
+            "value": {
+              "$type": "StringLiteral",
+              "text": "hello",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses comments between code", async () => {
+      const statements = await snapshotTest(`
+        let a = 1;
+        // Comment in the middle
+        let b = 2;
+        /* Multiline comment
+           spanning multiple lines */
+        let c = 3;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "a",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "1",
+            },
+          },
+          {
+            "$type": "Comment",
+            "text": "// Comment in the middle",
+          },
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "b",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "2",
+            },
+          },
+          {
+            "$type": "MultiLineComment",
+            "text": "/* Multiline comment
+                   spanning multiple lines */",
+          },
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "c",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "3",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses comment at end of let declaration", async () => {
+      const statements = await snapshotTest(`
+        let x = 42; // This is an inline comment
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "x",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "42",
+            },
+          },
+          {
+            "$type": "Comment",
+            "text": "// This is an inline comment",
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("Function Expressions", () => {
+    it("parses arrow function expression", async () => {
+      const statements = await snapshotTest(`
+        let add = fun (x: Number, y: Number): Number => x + y;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "add",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "BinaryExpression",
+                "left": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "operator": {
+                  "$type": "AdditionOperator",
+                  "text": "+",
+                },
+                "right": {
+                  "$type": "Identifier",
+                  "id": "y",
+                },
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "y",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses block function expression", async () => {
+      const statements = await snapshotTest(`
+        let multiply = fun (a: Number, b: Number): Number {
+          return a * b;
+        };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "multiply",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "Block",
+                "statements": [
+                  {
+                    "$type": "ReturnStatement",
+                    "expression": {
+                      "$type": "BinaryExpression",
+                      "left": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "operator": {
+                        "$type": "MultiplicationOperator",
+                        "text": "*",
+                      },
+                      "right": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                    },
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "a",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "b",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses arrow function without return type", async () => {
+      const statements = await snapshotTest(`
+        let square = fun (x: Number) => x * x;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "square",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "BinaryExpression",
+                "left": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "operator": {
+                  "$type": "MultiplicationOperator",
+                  "text": "*",
+                },
+                "right": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function expression with no parameters", async () => {
+      const statements = await snapshotTest(`
+        let getValue = fun (): Number => 42;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "getValue",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "NumberLiteral",
+                "text": "42",
+              },
+              "parameters": [],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function expression in array", async () => {
+      const statements = await snapshotTest(`
+        let funcs = [
+          fun (x: Number) => x + 1,
+          fun (x: Number) => x * 2
+        ];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "funcs",
+            },
+            "value": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "x",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "NumberLiteral",
+                      "text": "1",
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "x",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Number",
+                      },
+                    },
+                  ],
+                },
+                {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "x",
+                    },
+                    "operator": {
+                      "$type": "MultiplicationOperator",
+                      "text": "*",
+                    },
+                    "right": {
+                      "$type": "NumberLiteral",
+                      "text": "2",
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "x",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Number",
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses block function expression without return type", async () => {
+      const statements = await snapshotTest(`
+        let greet = fun (name: String) {
+          return "Hello, " + name;
+        };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "greet",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "Block",
+                "statements": [
+                  {
+                    "$type": "ReturnStatement",
+                    "expression": {
+                      "$type": "BinaryExpression",
+                      "left": {
+                        "$type": "StringLiteral",
+                        "text": "Hello, ",
+                      },
+                      "operator": {
+                        "$type": "AdditionOperator",
+                        "text": "+",
+                      },
+                      "right": {
+                        "$type": "Identifier",
+                        "id": "name",
+                      },
+                    },
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses nested function expressions", async () => {
+      const statements = await snapshotTest(`
+        let makeAdder = fun (x: Number) => fun (y: Number) => x + y;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "makeAdder",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "FunctionExpression",
+                "body": {
+                  "$type": "BinaryExpression",
+                  "left": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "operator": {
+                    "$type": "AdditionOperator",
+                    "text": "+",
+                  },
+                  "right": {
+                    "$type": "Identifier",
+                    "id": "y",
+                  },
+                },
+                "parameters": [
+                  {
+                    "$type": "ParameterDeclaration",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "y",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "Number",
+                    },
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
             },
           },
         ]

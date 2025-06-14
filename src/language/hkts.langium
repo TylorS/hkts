@@ -10,6 +10,8 @@ entry SourceFile:
 // Statements
 // =============================================
 Statement:
+    Comment |
+    MultiLineComment |
     Declaration |
     ReturnStatement |
     IfStatement |
@@ -27,9 +29,7 @@ Declaration:
 
 FunctionDeclaration:
     (exported?="export")?
-    (async?="async")?
     "fun" 
-    (generator?="*")? 
     name=Identifier 
     "(" 
     (parameters+=ParameterDeclaration ("," parameters+=ParameterDeclaration)*)? 
@@ -62,6 +62,12 @@ PropertyPattern:
 
 RestSpread:
     "..." name=Identifier;
+
+Comment:
+    text=SINGLE_LINE_COMMENT;
+
+MultiLineComment:
+    text=MULTI_LINE_COMMENT;
 
 // =============================================
 // Statements
@@ -145,7 +151,22 @@ PrimaryExpression:
     Literal |
     Identifier |
     ArrayLiteral |
-    ObjectLiteral;
+    ObjectLiteral |
+    FunctionExpression;
+
+// =============================================
+// Function Expression
+// =============================================
+FunctionExpression:
+    "fun" 
+    "(" 
+    (parameters+=ParameterDeclaration ("," parameters+=ParameterDeclaration)*)? 
+    ")" 
+    (":" returnType=Type)? 
+    (
+        ("=>" body=Expression) |
+        body=Block
+    );
 
 // =============================================
 // Literals
@@ -159,7 +180,7 @@ Literal:
     NumberLiteral;
 
 BooleanLiteral:
-    {infer BooleanLiteral} text=BOOLEAN;
+    text=BOOLEAN;
 
 StringLiteral:
     text=STRING;
@@ -185,7 +206,7 @@ Type:
     TypeReference;
 
 PrimitiveType:
-    name=("string" | "number" | "boolean" | "void");
+    name=("String" | "Number" | "Boolean" | "Unit");
 
 TypeReference:
     name=Identifier;
@@ -198,7 +219,7 @@ terminal STRING: /"[^"]*"/ | /'[^']*'/;
 terminal NUMBER: /[0-9]+/;
 terminal FLOAT: /[0-9]+\.[0-9]+/;
 terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
+terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;
+terminal MULTI_LINE_COMMENT: /\/\*[\s\S]*?\*\//;
 
 hidden terminal WS: /\s+/;
-hidden terminal ML_COMMENT: /\/\*[\s\S]*?\*\//;
-hidden terminal SL_COMMENT: /\/\/[^\n\r]*/;
