@@ -1885,6 +1885,519 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("Function Types", () => {
+    it("parses function type without parameter names", async () => {
+      const statements = await snapshotTest(`
+        let operation: (Number, Number) => Number = fun (x: Number, y: Number): Number => x + y;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "operation",
+            },
+            "type": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "BinaryExpression",
+                "left": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "operator": {
+                  "$type": "AdditionOperator",
+                  "text": "+",
+                },
+                "right": {
+                  "$type": "Identifier",
+                  "id": "y",
+                },
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "y",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function type with parameter names", async () => {
+      const statements = await snapshotTest(`
+        let greetFunction: (name: String, greeting: String) => String = fun (name: String, greeting: String): String => greeting + " " + name;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "greetFunction",
+            },
+            "type": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+                {
+                  "$type": "FunctionTypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "greeting",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "String",
+              },
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "BinaryExpression",
+                "left": {
+                  "$type": "BinaryExpression",
+                  "left": {
+                    "$type": "Identifier",
+                    "id": "greeting",
+                  },
+                  "operator": {
+                    "$type": "AdditionOperator",
+                    "text": "+",
+                  },
+                  "right": {
+                    "$type": "StringLiteral",
+                    "text": " ",
+                  },
+                },
+                "operator": {
+                  "$type": "AdditionOperator",
+                  "text": "+",
+                },
+                "right": {
+                  "$type": "Identifier",
+                  "id": "name",
+                },
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "greeting",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "String",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function type with mixed named and unnamed parameters", async () => {
+      const statements = await snapshotTest(`
+        let mixedFunction: (Number, name: String, Boolean) => Unit = fun (x: Number, name: String, flag: Boolean): Unit { return; };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "mixedFunction",
+            },
+            "type": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+                {
+                  "$type": "FunctionTypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Unit",
+              },
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "Block",
+                "statements": [
+                  {
+                    "$type": "ReturnStatement",
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "flag",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Unit",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function type with no parameters", async () => {
+      const statements = await snapshotTest(`
+        let getValue: () => Number = fun (): Number => 42;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "getValue",
+            },
+            "type": {
+              "$type": "FunctionType",
+              "parameters": [],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "NumberLiteral",
+                "text": "42",
+              },
+              "parameters": [],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Number",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses nested function types", async () => {
+      const statements = await snapshotTest(`
+        let curryFunction: (Number) => (String) => Boolean = fun (x: Number) => fun (s: String) => true;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "curryFunction",
+            },
+            "type": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "FunctionType",
+                "parameters": [
+                  {
+                    "$type": "FunctionTypeParameter",
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                ],
+                "returnType": {
+                  "$type": "PrimitiveType",
+                  "name": "Boolean",
+                },
+              },
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "FunctionExpression",
+                "body": {
+                  "$type": "BooleanLiteral",
+                  "text": "true",
+                },
+                "parameters": [
+                  {
+                    "$type": "ParameterDeclaration",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "s",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function parameter with function type", async () => {
+      const statements = await snapshotTest(`
+        fun applyOperation(op: (Number, Number) => Number, x: Number, y: Number): Number {
+          return x;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "applyOperation",
+            },
+            "parameters": [
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "op",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Number",
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Number",
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Number",
+                  },
+                },
+              },
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "type": {
+                  "$type": "PrimitiveType",
+                  "name": "Number",
+                },
+              },
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "y",
+                },
+                "type": {
+                  "$type": "PrimitiveType",
+                  "name": "Number",
+                },
+              },
+            ],
+            "returnType": {
+              "$type": "PrimitiveType",
+              "name": "Number",
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 

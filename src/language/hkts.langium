@@ -202,8 +202,15 @@ Property:
 // Types
 // =============================================
 Type:
+    FunctionType |
     PrimitiveType |
     TypeReference;
+
+FunctionType:
+    "(" (parameters+=FunctionTypeParameter ("," parameters+=FunctionTypeParameter)*)? ")" "=>" returnType=Type;
+
+FunctionTypeParameter:
+    (name=Identifier ":")? type=Type;
 
 PrimitiveType:
     name=("String" | "Number" | "Boolean" | "Unit");
