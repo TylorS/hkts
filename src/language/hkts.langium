@@ -12,6 +12,7 @@ entry SourceFile:
 Statement:
     Declaration |
     ReturnStatement |
+    IfStatement |
     ExpressionStatement;
 
 ExpressionStatement:
@@ -48,6 +49,17 @@ Block:
 // =============================================
 ReturnStatement:
     "return" expression=Expression? ";"?;
+
+IfStatement:
+    "if" "(" condition=Expression ")" then=Block 
+    (elseIfs+=ElseIfClause)* 
+    (else=ElseClause)?;
+
+ElseIfClause:
+    "else" "if" "(" condition=Expression ")" then=Block;
+
+ElseClause:
+    "else" block=Block;
 
 // =============================================
 // Expressions

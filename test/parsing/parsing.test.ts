@@ -565,6 +565,414 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("if statements", () => {
+    it("parses basic if statement", async () => {
+      const statements = await snapshotTest(`
+        if (true) {
+          return 1;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "IfStatement",
+            "condition": {
+              "$type": "BooleanLiteral",
+              "text": "true",
+            },
+            "elseIfs": [],
+            "then": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "NumberLiteral",
+                    "text": "1",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses if-else statement", async () => {
+      const statements = await snapshotTest(`
+        if (x > 0) {
+          return "positive";
+        } else {
+          return "not positive";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "IfStatement",
+            "condition": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "GreaterThanOperator",
+                  "text": ">",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "0",
+              },
+            },
+            "else": {
+              "$type": "ElseClause",
+              "block": {
+                "$type": "Block",
+                "statements": [
+                  {
+                    "$type": "ReturnStatement",
+                    "expression": {
+                      "$type": "StringLiteral",
+                      "text": "not positive",
+                    },
+                  },
+                ],
+              },
+            },
+            "elseIfs": [],
+            "then": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "StringLiteral",
+                    "text": "positive",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses if-else-if statement", async () => {
+      const statements = await snapshotTest(`
+        if (x > 0) {
+          return "positive";
+        } else if (x < 0) {
+          return "negative";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "IfStatement",
+            "condition": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "GreaterThanOperator",
+                  "text": ">",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "0",
+              },
+            },
+            "elseIfs": [
+              {
+                "$type": "ElseIfClause",
+                "condition": {
+                  "$type": "BinaryExpression",
+                  "left": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "operator": {
+                    "$type": "ComparisonOperator",
+                    "operator": {
+                      "$type": "LessThanOperator",
+                      "text": "<",
+                    },
+                  },
+                  "right": {
+                    "$type": "NumberLiteral",
+                    "text": "0",
+                  },
+                },
+                "then": {
+                  "$type": "Block",
+                  "statements": [
+                    {
+                      "$type": "ReturnStatement",
+                      "expression": {
+                        "$type": "StringLiteral",
+                        "text": "negative",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+            "then": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "StringLiteral",
+                    "text": "positive",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses if-else-if-else statement", async () => {
+      const statements = await snapshotTest(`
+        if (x > 0) {
+          return "positive";
+        } else if (x < 0) {
+          return "negative";
+        } else {
+          return "zero";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "IfStatement",
+            "condition": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "GreaterThanOperator",
+                  "text": ">",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "0",
+              },
+            },
+            "else": {
+              "$type": "ElseClause",
+              "block": {
+                "$type": "Block",
+                "statements": [
+                  {
+                    "$type": "ReturnStatement",
+                    "expression": {
+                      "$type": "StringLiteral",
+                      "text": "zero",
+                    },
+                  },
+                ],
+              },
+            },
+            "elseIfs": [
+              {
+                "$type": "ElseIfClause",
+                "condition": {
+                  "$type": "BinaryExpression",
+                  "left": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "operator": {
+                    "$type": "ComparisonOperator",
+                    "operator": {
+                      "$type": "LessThanOperator",
+                      "text": "<",
+                    },
+                  },
+                  "right": {
+                    "$type": "NumberLiteral",
+                    "text": "0",
+                  },
+                },
+                "then": {
+                  "$type": "Block",
+                  "statements": [
+                    {
+                      "$type": "ReturnStatement",
+                      "expression": {
+                        "$type": "StringLiteral",
+                        "text": "negative",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+            "then": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "StringLiteral",
+                    "text": "positive",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses multiple else-if blocks", async () => {
+      const statements = await snapshotTest(`
+        if (x == 1) {
+          return "one";
+        } else if (x == 2) {
+          return "two";
+        } else if (x == 3) {
+          return "three";
+        } else {
+          return "other";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "IfStatement",
+            "condition": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+              "operator": {
+                "$type": "EqualityOperator",
+                "text": "==",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+            },
+            "else": {
+              "$type": "ElseClause",
+              "block": {
+                "$type": "Block",
+                "statements": [
+                  {
+                    "$type": "ReturnStatement",
+                    "expression": {
+                      "$type": "StringLiteral",
+                      "text": "other",
+                    },
+                  },
+                ],
+              },
+            },
+            "elseIfs": [
+              {
+                "$type": "ElseIfClause",
+                "condition": {
+                  "$type": "BinaryExpression",
+                  "left": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "operator": {
+                    "$type": "EqualityOperator",
+                    "text": "==",
+                  },
+                  "right": {
+                    "$type": "NumberLiteral",
+                    "text": "2",
+                  },
+                },
+                "then": {
+                  "$type": "Block",
+                  "statements": [
+                    {
+                      "$type": "ReturnStatement",
+                      "expression": {
+                        "$type": "StringLiteral",
+                        "text": "two",
+                      },
+                    },
+                  ],
+                },
+              },
+              {
+                "$type": "ElseIfClause",
+                "condition": {
+                  "$type": "BinaryExpression",
+                  "left": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "operator": {
+                    "$type": "EqualityOperator",
+                    "text": "==",
+                  },
+                  "right": {
+                    "$type": "NumberLiteral",
+                    "text": "3",
+                  },
+                },
+                "then": {
+                  "$type": "Block",
+                  "statements": [
+                    {
+                      "$type": "ReturnStatement",
+                      "expression": {
+                        "$type": "StringLiteral",
+                        "text": "three",
+                      },
+                    },
+                  ],
+                },
+              },
+            ],
+            "then": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "StringLiteral",
+                    "text": "one",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
