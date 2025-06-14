@@ -22,7 +22,8 @@
         "dev": "vite",
         "dev:debug": "vite --debug --force",
         "serve": "npm run dev",
-        "test": "vitest run"
+        "vitest": "vitest run",
+        "test": "pnpm langium:generate:production && pnpm vitest"
     },
     "dependencies": {
         "langium": "~3.5.0",
