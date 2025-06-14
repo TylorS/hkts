@@ -4678,6 +4678,1260 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("Typeclass Declarations", () => {
+    it("parses simple typeclass declaration", async () => {
+      const statements = await snapshotTest(`
+        typeclass Eq {
+          eq: (a: T, b: T) => Boolean
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Eq",
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "eq",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses typeclass declaration with type parameters", async () => {
+      const statements = await snapshotTest(`
+        typeclass Functor<F> {
+          map: (f: (a: A) => B, fa: F) => F
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Functor",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "F",
+                  },
+                },
+              ],
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "map",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "f",
+                      },
+                      "type": {
+                        "$type": "FunctionType",
+                        "parameters": [
+                          {
+                            "$type": "FunctionTypeParameter",
+                            "name": {
+                              "$type": "Identifier",
+                              "id": "a",
+                            },
+                            "type": {
+                              "$type": "TypeReference",
+                              "name": {
+                                "$type": "Identifier",
+                                "id": "A",
+                              },
+                            },
+                          },
+                        ],
+                        "returnType": {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "B",
+                          },
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "fa",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "F",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "F",
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses typeclass declaration with multiple properties", async () => {
+      const statements = await snapshotTest(`
+        typeclass Ord<T> {
+          compare: (a: T, b: T) => Int
+          lessThan: (a: T, b: T) => Boolean
+          greaterThan: (a: T, b: T) => Boolean
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Ord",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "compare",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Int",
+                  },
+                },
+              },
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "lessThan",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              },
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "greaterThan",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses exported typeclass declaration", async () => {
+      const statements = await snapshotTest(`
+        export typeclass Show<T> {
+          show: (value: T) => String
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": true,
+            "name": {
+              "$type": "Identifier",
+              "id": "Show",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "show",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "value",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses empty typeclass declaration", async () => {
+      const statements = await snapshotTest(`
+        typeclass Marker {
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Marker",
+            },
+            "properties": [],
+          },
+        ]
+      `);
+    });
+
+    it("parses typeclass declaration with constrained type parameters", async () => {
+      const statements = await snapshotTest(`
+        typeclass Monad<M: Functor> {
+          pure: (value: A) => M
+          flatMap: (ma: M, f: (a: A) => M) => M
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Monad",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "M",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Functor",
+                    },
+                  },
+                },
+              ],
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "pure",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "value",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "A",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "M",
+                    },
+                  },
+                },
+              },
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "flatMap",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "ma",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "M",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "f",
+                      },
+                      "type": {
+                        "$type": "FunctionType",
+                        "parameters": [
+                          {
+                            "$type": "FunctionTypeParameter",
+                            "name": {
+                              "$type": "Identifier",
+                              "id": "a",
+                            },
+                            "type": {
+                              "$type": "TypeReference",
+                              "name": {
+                                "$type": "Identifier",
+                                "id": "A",
+                              },
+                            },
+                          },
+                        ],
+                        "returnType": {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "M",
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "M",
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses typeclass declaration with complex method signatures", async () => {
+      const statements = await snapshotTest(`
+        typeclass Semigroup<T> {
+          combine: (a: T, b: T) => T
+          combineAll: (values: T[]) => T
+          isEmpty: () => Boolean
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Semigroup",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "combine",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "T",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "T",
+                    },
+                  },
+                },
+              },
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "combineAll",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "values",
+                      },
+                      "type": {
+                        "$type": "ArrayType",
+                        "elementType": {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "T",
+                          },
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "T",
+                    },
+                  },
+                },
+              },
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "isEmpty",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("Higher-Kinded Types", () => {
+    it("parses simple type hole", async () => {
+      const statements = await snapshotTest(`
+        type T = _;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeHole",
+              "hole": "_",
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "T",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses higher-kinded type with single type hole", async () => {
+      const statements = await snapshotTest(`
+        type F = Option<_>;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Option",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "TypeHole",
+                    "hole": "_",
+                  },
+                ],
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "F",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses higher-kinded type with multiple type holes", async () => {
+      const statements = await snapshotTest(`
+        type F = Either<_, _>;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Either",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "TypeHole",
+                    "hole": "_",
+                  },
+                  {
+                    "$type": "TypeHole",
+                    "hole": "_",
+                  },
+                ],
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "F",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses higher-kinded type with mixed concrete types and type holes", async () => {
+      const statements = await snapshotTest(`
+        type F = Result<String, _>;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Result",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                  {
+                    "$type": "TypeHole",
+                    "hole": "_",
+                  },
+                ],
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "F",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses higher-kinded type with concrete type in middle", async () => {
+      const statements = await snapshotTest(`
+        type F = Triple<_, Int, _>;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Triple",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "TypeHole",
+                    "hole": "_",
+                  },
+                  {
+                    "$type": "PrimitiveType",
+                    "name": "Int",
+                  },
+                  {
+                    "$type": "TypeHole",
+                    "hole": "_",
+                  },
+                ],
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "F",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses nested higher-kinded types", async () => {
+      const statements = await snapshotTest(`
+        type F = Option<Result<_, String>>;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Option",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Result",
+                    },
+                    "typeArguments": {
+                      "$type": "TypeArgumentList",
+                      "arguments": [
+                        {
+                          "$type": "TypeHole",
+                          "hole": "_",
+                        },
+                        {
+                          "$type": "PrimitiveType",
+                          "name": "String",
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "F",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function with higher-kinded type parameters", async () => {
+      const statements = await snapshotTest(`
+        fun map<F: Functor>(f: (a: A) => B, fa: F<A>): F<B> {
+          return fa.map(f);
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "Identifier",
+                        "id": "f",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "MemberExpression",
+                      "object": {
+                        "$type": "Identifier",
+                        "id": "fa",
+                      },
+                      "property": {
+                        "$type": "Identifier",
+                        "id": "map",
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "map",
+            },
+            "parameters": [
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "f",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "A",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "B",
+                    },
+                  },
+                },
+              },
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "fa",
+                },
+                "type": {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "F",
+                  },
+                  "typeArguments": {
+                    "$type": "TypeArgumentList",
+                    "arguments": [
+                      {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "A",
+                        },
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
+            "returnType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "F",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "B",
+                    },
+                  },
+                ],
+              },
+            },
+            "typeParameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "F",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Functor",
+                    },
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses typeclass with higher-kinded type parameters", async () => {
+      const statements = await snapshotTest(`
+        typeclass Functor<F<_>> {
+          map: (f: (a: A) => B, fa: F<A>) => F<B>
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeclassDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Functor",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "arguments": {
+                    "$type": "TypeArgumentList",
+                    "arguments": [
+                      {
+                        "$type": "TypeHole",
+                        "hole": "_",
+                      },
+                    ],
+                  },
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "F",
+                  },
+                },
+              ],
+            },
+            "properties": [
+              {
+                "$type": "TypeclassProperty",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "map",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "f",
+                      },
+                      "type": {
+                        "$type": "FunctionType",
+                        "parameters": [
+                          {
+                            "$type": "FunctionTypeParameter",
+                            "name": {
+                              "$type": "Identifier",
+                              "id": "a",
+                            },
+                            "type": {
+                              "$type": "TypeReference",
+                              "name": {
+                                "$type": "Identifier",
+                                "id": "A",
+                              },
+                            },
+                          },
+                        ],
+                        "returnType": {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "B",
+                          },
+                        },
+                      },
+                    },
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "fa",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "F",
+                        },
+                        "typeArguments": {
+                          "$type": "TypeArgumentList",
+                          "arguments": [
+                            {
+                              "$type": "TypeReference",
+                              "name": {
+                                "$type": "Identifier",
+                                "id": "A",
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "F",
+                    },
+                    "typeArguments": {
+                      "$type": "TypeArgumentList",
+                      "arguments": [
+                        {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "B",
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses array of higher-kinded types", async () => {
+      const statements = await snapshotTest(`
+        type F = Option<_>[];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Option",
+                },
+                "typeArguments": {
+                  "$type": "TypeArgumentList",
+                  "arguments": [
+                    {
+                      "$type": "TypeHole",
+                      "hole": "_",
+                    },
+                  ],
+                },
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "F",
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   describe("Pattern Matching", () => {
     it("parses simple match expression with literal patterns", async () => {
       const statements = await snapshotTest(`

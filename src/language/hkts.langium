@@ -27,14 +27,19 @@ Declaration:
     FunctionDeclaration |
     LetDeclaration | 
     DataDeclaration |
-    TypeAliasDeclaration;
+    TypeAliasDeclaration |
+    TypeclassDeclaration;
 
 FunctionDeclaration:
     (exported?="export")?
     "fun" 
     name=Identifier 
+    typeParameters=TypeParameterList?
     "(" 
-    (parameters+=ParameterDeclaration ("," parameters+=ParameterDeclaration)*)? 
+    (
+        parameters+=ParameterDeclaration 
+        ("," parameters+=ParameterDeclaration)*
+    )? 
     ")" 
     (":" returnType=Type)? 
     block=Block;
@@ -45,22 +50,44 @@ ParameterDeclaration:
     type=Type;
 
 Block:
-    "{" statements+=Statement* "}";
+    "{" 
+    statements+=Statement* 
+    "}";
 
 LetDeclaration:
-    (exported?="export")? "let" name=(Identifier|ArrayDestructuring|ObjectDestructuring) (":" type=Type)? "=" value=Expression ";"?;
+    (exported?="export")? 
+    "let" 
+    name=(
+        Identifier |
+        ArrayDestructuring |
+        ObjectDestructuring
+    ) 
+    (":" type=Type)? 
+    "=" 
+    value=Expression 
+    ";"?;
 
 ArrayDestructuring:
-    "[" destructured+=Identifier ("," destructured+=Identifier)* "]";
+    "[" 
+    destructured+=Identifier 
+    ("," destructured+=Identifier)* 
+    "]";
 
 ObjectDestructuring:
-    "{" (properties+=ObjectDestructuringProperty ("," properties+=ObjectDestructuringProperty)*)? "}";
+    "{" 
+    (
+        properties+=ObjectDestructuringProperty 
+        ("," properties+=ObjectDestructuringProperty)*
+    )? 
+    "}";
 
 ObjectDestructuringProperty:
-    RestSpread | PropertyPattern;
+    RestSpread | 
+    PropertyPattern;
 
 PropertyPattern:
-    key=Identifier (":" target=Identifier)?;
+    key=Identifier 
+    (":" target=Identifier)?;
 
 RestSpread:
     "..." name=Identifier;
@@ -72,7 +99,15 @@ MultiLineComment:
     text=MULTI_LINE_COMMENT;
 
 DataDeclaration:
-    (exported?="export")? "data" name=Identifier parameters=TypeParameterList? "=" (constructors+=ConstructorDeclaration ("|" constructors+=ConstructorDeclaration)*)?;
+    (exported?="export")? 
+    "data" 
+    name=Identifier 
+    parameters=TypeParameterList? 
+    "=" 
+    (
+        constructors+=ConstructorDeclaration 
+        ("|" constructors+=ConstructorDeclaration)*
+    )?;
 
 ConstructorDeclaration:
     VoidConstructor |
@@ -83,33 +118,74 @@ VoidConstructor:
     name=Identifier;
 
 TupleConstructor:
-    name=Identifier "(" (parameters+=TupleConstructorParameter ("," parameters+=TupleConstructorParameter)*)? ")";
+    name=Identifier 
+    "(" 
+    (
+        parameters+=TupleConstructorParameter 
+        ("," parameters+=TupleConstructorParameter)*
+    )? 
+    ")";
 
 TupleConstructorParameter:
-    (name=Identifier ":")? type=Type;
+    (name=Identifier ":")? 
+    type=Type;
 
 ObjectConstructor:
-    name=Identifier "{" (parameters+=PropertyType ("," parameters+=PropertyType)*)? "}";
+    name=Identifier 
+    "{" 
+    (
+        parameters+=PropertyType 
+        ("," parameters+=PropertyType)*
+    )? 
+    "}";
 
 TypeAliasDeclaration:
-    (exported?="export")? "type" name=Identifier parameters=TypeParameterList? "=" aliasType=Type ";";
+    (exported?="export")? 
+    "type" 
+    name=Identifier 
+    parameters=TypeParameterList? 
+    "=" 
+    aliasType=Type 
+    ";";
+
+TypeclassDeclaration:
+    (exported?="export")? 
+    "typeclass" 
+    name=Identifier 
+    parameters=TypeParameterList? 
+    "{" 
+    (properties+=TypeclassProperty)* 
+    "}";
+
+TypeclassProperty:
+    name=Identifier 
+    ":" 
+    type=Type;
 
 // =============================================
-// Statements
+// Control Flow Statements
 // =============================================
 ReturnStatement:
-    "return" expression=Expression? ";"?;
+    "return" 
+    expression=Expression? 
+    ";"?;
 
 IfStatement:
-    "if" "(" condition=Expression ")" then=Block 
+    "if" 
+    "(" condition=Expression ")" 
+    then=Block 
     (elseIfs+=ElseIfClause)* 
     (else=ElseClause)?;
 
 ElseIfClause:
-    "else" "if" "(" condition=Expression ")" then=Block;
+    "else" 
+    "if" 
+    "(" condition=Expression ")" 
+    then=Block;
 
 ElseClause:
-    "else" block=Block;
+    "else" 
+    block=Block;
 
 // =============================================
 // Expressions
@@ -118,21 +194,40 @@ Expression:
     EqualityExpression;
 
 EqualityExpression:
-    ComparisonExpression ({infer BinaryExpression.left=current} operator=(EqualityOperator | InequalityOperator) right=ComparisonExpression)*;
+    ComparisonExpression 
+    (
+        {infer BinaryExpression.left=current} 
+        operator=(EqualityOperator | InequalityOperator) 
+        right=ComparisonExpression
+    )*;
 
 ComparisonExpression:
-    AdditiveExpression ({infer BinaryExpression.left=current} operator=ComparisonOperator right=AdditiveExpression)*;
+    AdditiveExpression 
+    (
+        {infer BinaryExpression.left=current} 
+        operator=ComparisonOperator 
+        right=AdditiveExpression
+    )*;
 
 AdditiveExpression:
-    MultiplicativeExpression ({infer BinaryExpression.left=current} operator=(AdditionOperator | SubtractionOperator) right=MultiplicativeExpression)*;
+    MultiplicativeExpression 
+    (
+        {infer BinaryExpression.left=current} 
+        operator=(AdditionOperator | SubtractionOperator) 
+        right=MultiplicativeExpression
+    )*;
 
 MultiplicativeExpression:
-    PrimaryExpression ({infer BinaryExpression.left=current} operator=(MultiplicationOperator | DivisionOperator) right=PrimaryExpression)*;
+    PrimaryExpression 
+    (
+        {infer BinaryExpression.left=current} 
+        operator=(MultiplicationOperator | DivisionOperator) 
+        right=PrimaryExpression
+    )*;
 
 // =============================================
 // Operators
 // =============================================
-
 AdditionOperator:
     text='+';
 
@@ -194,7 +289,13 @@ MemberExpression:
 // Call Expression
 // =============================================
 CallExpression:
-    callee=(Identifier|MemberExpression) "(" (arguments+=Expression ("," arguments+=Expression)*)? ")";
+    callee=(Identifier | MemberExpression) 
+    "(" 
+    (
+        arguments+=Expression 
+        ("," arguments+=Expression)*
+    )? 
+    ")";
 
 // =============================================
 // Function Expression
@@ -202,7 +303,10 @@ CallExpression:
 FunctionExpression:
     "fun" 
     "(" 
-    (parameters+=ParameterDeclaration ("," parameters+=ParameterDeclaration)*)? 
+    (
+        parameters+=ParameterDeclaration 
+        ("," parameters+=ParameterDeclaration)*
+    )? 
     ")" 
     (":" returnType=Type)? 
     (
@@ -214,10 +318,20 @@ FunctionExpression:
 // Match Expression & Patterns
 // =============================================
 MatchExpression:
-    "match" "(" target=Expression ")" "{" (cases+=MatchCase)* "}";
+    "match" 
+    "(" target=Expression ")" 
+    "{" 
+    (cases+=MatchCase)* 
+    "}";
 
 MatchCase:
-    pattern=Pattern (guard=GuardExpression)? "=>" (body=Expression ";" | body=Block);
+    pattern=Pattern 
+    (guard=GuardExpression)? 
+    "=>" 
+    (
+        body=Expression ";" | 
+        body=Block
+    );
 
 GuardExpression:
     "if" condition=Expression;
@@ -226,7 +340,11 @@ Pattern:
     TypedPattern;
 
 TypedPattern:
-    BasePattern ({infer TypedPattern.pattern=current} ":" type=Type)?;
+    BasePattern 
+    (
+        {infer TypedPattern.pattern=current} 
+        ":" type=Type
+    )?;
 
 BasePattern:
     PrimaryPattern;
@@ -248,14 +366,33 @@ LiteralPattern:
 
 ArrayPattern:
     "[]" |
-    "[" (patterns+=Pattern ("," patterns+=Pattern)*)? ("," "..." restPattern=Identifier)? "]";
+    "[" 
+    (
+        patterns+=Pattern 
+        ("," patterns+=Pattern)*
+    )? 
+    ("," "..." restPattern=Identifier)? 
+    "]";
 
 ObjectPattern:
-    "{" (fields+=FieldPattern ("," fields+=FieldPattern)*)? ("," "..." restPattern=Identifier)? "}";
+    "{" 
+    (
+        fields+=FieldPattern 
+        ("," fields+=FieldPattern)*
+    )? 
+    ("," "..." restPattern=Identifier)? 
+    "}";
 
 ConstructorPattern:
-    constructor=Identifier "(" (patterns+=Pattern ("," patterns+=Pattern)*)? ")" |
-    constructor=Identifier pattern=ObjectPattern;
+    constructor=Identifier 
+    "(" 
+    (
+        patterns+=Pattern 
+        ("," patterns+=Pattern)*
+    )? 
+    ")" |
+    constructor=Identifier 
+    pattern=ObjectPattern;
 
 VariablePattern:
     name=Identifier;
@@ -297,13 +434,24 @@ BigDecimalLiteral:
     text=BIGDECIMAL;
 
 ArrayLiteral:
-    "[" (elements+=Expression ("," elements+=Expression)*)? "]";
+    "[" 
+    (
+        elements+=Expression 
+        ("," elements+=Expression)*
+    )? 
+    "]";
 
 ObjectLiteral:
-    "{" (properties+=Property ("," properties+=Property)*)? "}";
+    "{" 
+    (
+        properties+=Property 
+        ("," properties+=Property)*
+    )? 
+    "}";
 
 Property:
-    key=Identifier (":" value=Expression)?;
+    key=Identifier 
+    (":" value=Expression)?;
 
 // =============================================
 // Types
@@ -312,13 +460,23 @@ Type:
     PostfixType;
 
 TypeParameterList:
-    "<" (parameters+=TypeParameter ("," parameters+=TypeParameter)*)? ">";
+    "<" 
+    (
+        parameters+=(TypeParameter) 
+        ("," parameters+=(TypeParameter))*
+    )? 
+    ">";
 
 TypeParameter:
-    name=Identifier (":" type=Type)?;
+    name=Identifier (":" type=Type)? |
+    name=Identifier arguments=TypeArgumentList?;
 
 PostfixType:
-    PrimaryType ({infer ArrayType.elementType=current} "[]")*;
+    PrimaryType 
+    (
+        {infer ArrayType.elementType=current} 
+        "[]"
+    )*;
 
 PrimaryType:
     FunctionType |
@@ -327,16 +485,37 @@ PrimaryType:
     TypeReference |
     ObjectType |
     TupleType |
+    TypeHole |
     "(" Type ")";
 
 FunctionType:
-    "(" (parameters+=FunctionTypeParameter ("," parameters+=FunctionTypeParameter)*)? ")" "=>" returnType=Type;
+    "(" 
+    (
+        parameters+=FunctionTypeParameter 
+        ("," parameters+=FunctionTypeParameter)*
+    )? 
+    ")" 
+    "=>" 
+    returnType=Type;
 
 FunctionTypeParameter:
-    (name=Identifier ":")? type=Type;
+    (name=Identifier ":")? 
+    type=Type;
 
 PrimitiveType:
-    name=("String" | "Int" | "Int64" | "BigInt" | "Float32" | "Float64" | "BigDecimal" | "Boolean" | "Unit" | "!" | "{}");
+    name=(
+        "String" | 
+        "Int" | 
+        "Int64" | 
+        "BigInt" | 
+        "Float32" | 
+        "Float64" | 
+        "BigDecimal" | 
+        "Boolean" | 
+        "Unit" | 
+        "!" | 
+        "unknown"
+    );
 
 LiteralType:
     BooleanLiteralType |
@@ -365,31 +544,78 @@ BigDecimalLiteralType:
     text=BIGDECIMAL;
 
 ObjectType:
-    "{" (properties+=(PropertyType | SpreadType) ("," properties+=(PropertyType | SpreadType))*)? "}";
+    "{" 
+    (
+        properties+=(PropertyType | SpreadType) 
+        ("," properties+=(PropertyType | SpreadType))*
+    )? 
+    "}";
 
 PropertyType:
-    key=Identifier ":" type=Type;
+    key=Identifier 
+    ":" 
+    type=Type;
 
 TupleType:
-    "[" (types+=(Type | SpreadType) ("," types+=(Type | SpreadType))*)? "]";
+    "[" 
+    (
+        types+=(Type | SpreadType) 
+        ("," types+=(Type | SpreadType))*
+    )? 
+    "]";
 
 SpreadType:
     "..." type=Type;
 
 TypeReference:
-    name=Identifier;
+    name=Identifier 
+    (typeArguments=TypeArgumentList)?;
+
+TypeArgumentList:
+    "<" 
+    (
+        arguments+=TypeArgument 
+        ("," arguments+=TypeArgument)*
+    )? 
+    ">";
+
+TypeArgument:
+    Type | 
+    TypeHole;
+
+TypeHole:
+    hole="_";
 
 // =============================================
 // Terminals
 // =============================================
-terminal BOOLEAN: /true|false/;
-terminal STRING: /"[^"]*"/ | /'[^']*'/;
-terminal BIGDECIMAL: /[0-9]+\.[0-9]+n/;
-terminal BIGINT: /[0-9]+n/;
-terminal FLOAT: /[0-9]+\.[0-9]+/;
-terminal INTEGER: /[0-9]+/;
-terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
-terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;
-terminal MULTI_LINE_COMMENT: /\/\*[\s\S]*?\*\//;
+terminal BOOLEAN: 
+    /true|false/;
 
-hidden terminal WS: /\s+/;
+terminal STRING: 
+    /"[^"]*"/ | 
+    /'[^']*'/;
+
+terminal BIGDECIMAL: 
+    /[0-9]+\.[0-9]+n/;
+
+terminal BIGINT: 
+    /[0-9]+n/;
+
+terminal FLOAT: 
+    /[0-9]+\.[0-9]+/;
+
+terminal INTEGER: 
+    /[0-9]+/;
+
+terminal ID: 
+    /[a-zA-Z_][a-zA-Z0-9_]*/;
+
+terminal SINGLE_LINE_COMMENT: 
+    /\/\/[^\n\r]*/;
+
+terminal MULTI_LINE_COMMENT: 
+    /\/\*[\s\S]*?\*\//;
+
+hidden terminal WS: 
+    /\s+/;
