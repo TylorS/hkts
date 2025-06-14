@@ -1487,8 +1487,11 @@ describe("Parsing tests", () => {
                     "id": "x",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
                 {
@@ -1498,14 +1501,20 @@ describe("Parsing tests", () => {
                     "id": "y",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
           },
@@ -1562,8 +1571,11 @@ describe("Parsing tests", () => {
                     "id": "a",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
                 {
@@ -1573,14 +1585,20 @@ describe("Parsing tests", () => {
                     "id": "b",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
           },
@@ -1627,8 +1645,11 @@ describe("Parsing tests", () => {
                     "id": "x",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
@@ -1660,8 +1681,11 @@ describe("Parsing tests", () => {
               },
               "parameters": [],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
           },
@@ -1714,8 +1738,11 @@ describe("Parsing tests", () => {
                         "id": "x",
                       },
                       "type": {
-                        "$type": "PrimitiveType",
-                        "name": "Number",
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
                       },
                     },
                   ],
@@ -1745,8 +1772,11 @@ describe("Parsing tests", () => {
                         "id": "x",
                       },
                       "type": {
-                        "$type": "PrimitiveType",
-                        "name": "Number",
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
                       },
                     },
                   ],
@@ -1859,8 +1889,11 @@ describe("Parsing tests", () => {
                       "id": "y",
                     },
                     "type": {
-                      "$type": "PrimitiveType",
-                      "name": "Number",
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
                     },
                   },
                 ],
@@ -1873,8 +1906,11 @@ describe("Parsing tests", () => {
                     "id": "x",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
@@ -1883,7 +1919,7 @@ describe("Parsing tests", () => {
         ]
       `);
     });
-  });
+    });
 
   describe("Function Types", () => {
     it("parses function type without parameter names", async () => {
@@ -1906,21 +1942,30 @@ describe("Parsing tests", () => {
                 {
                   "$type": "FunctionTypeParameter",
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
                 {
                   "$type": "FunctionTypeParameter",
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
             "value": {
@@ -1948,8 +1993,11 @@ describe("Parsing tests", () => {
                     "id": "x",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
                 {
@@ -1959,14 +2007,20 @@ describe("Parsing tests", () => {
                     "id": "y",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
           },
@@ -2101,8 +2155,11 @@ describe("Parsing tests", () => {
                 {
                   "$type": "FunctionTypeParameter",
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
                 {
@@ -2147,8 +2204,11 @@ describe("Parsing tests", () => {
                     "id": "x",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
                 {
@@ -2202,8 +2262,11 @@ describe("Parsing tests", () => {
               "$type": "FunctionType",
               "parameters": [],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
             "value": {
@@ -2214,8 +2277,11 @@ describe("Parsing tests", () => {
               },
               "parameters": [],
               "returnType": {
-                "$type": "PrimitiveType",
-                "name": "Number",
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Number",
+                },
               },
             },
           },
@@ -2243,8 +2309,11 @@ describe("Parsing tests", () => {
                 {
                   "$type": "FunctionTypeParameter",
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
@@ -2295,8 +2364,11 @@ describe("Parsing tests", () => {
                     "id": "x",
                   },
                   "type": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               ],
@@ -2360,21 +2432,30 @@ describe("Parsing tests", () => {
                     {
                       "$type": "FunctionTypeParameter",
                       "type": {
-                        "$type": "PrimitiveType",
-                        "name": "Number",
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
                       },
                     },
                     {
                       "$type": "FunctionTypeParameter",
                       "type": {
-                        "$type": "PrimitiveType",
-                        "name": "Number",
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
                       },
                     },
                   ],
                   "returnType": {
-                    "$type": "PrimitiveType",
-                    "name": "Number",
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               },
@@ -2385,8 +2466,11 @@ describe("Parsing tests", () => {
                   "id": "x",
                 },
                 "type": {
-                  "$type": "PrimitiveType",
-                  "name": "Number",
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "Number",
+                  },
                 },
               },
               {
@@ -2396,14 +2480,20 @@ describe("Parsing tests", () => {
                   "id": "y",
                 },
                 "type": {
-                  "$type": "PrimitiveType",
-                  "name": "Number",
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "Number",
+                  },
                 },
               },
             ],
             "returnType": {
-              "$type": "PrimitiveType",
-              "name": "Number",
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Number",
+              },
             },
           },
         ]
@@ -2744,6 +2834,523 @@ describe("Parsing tests", () => {
         ]
       `);
     })
+  });
+
+  describe("Array Types (Postfix)", () => {
+    it("parses simple array type", async () => {
+      const statements = await snapshotTest(`
+        let numbers: String[] = ["a", "b"];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "numbers",
+            },
+            "type": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "PrimitiveType",
+                "name": "String",
+              },
+            },
+            "value": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "StringLiteral",
+                  "text": "a",
+                },
+                {
+                  "$type": "StringLiteral",
+                  "text": "b",
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses nested array type", async () => {
+      const statements = await snapshotTest(`
+        let matrix: Number[][] = [[1, 2], [3, 4]];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "matrix",
+            },
+            "type": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "ArrayType",
+                "elementType": {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "Number",
+                  },
+                },
+              },
+            },
+            "value": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "ArrayLiteral",
+                  "elements": [
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "1",
+                    },
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "2",
+                    },
+                  ],
+                },
+                {
+                  "$type": "ArrayLiteral",
+                  "elements": [
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "3",
+                    },
+                    {
+                      "$type": "NumberLiteral",
+                      "text": "4",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses array of function types", async () => {
+      const statements = await snapshotTest(`
+        let operations: ((Number, Number) => Number)[] = [fun (x: Number, y: Number) => x + y];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "operations",
+            },
+            "type": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "FunctionType",
+                "parameters": [
+                  {
+                    "$type": "FunctionTypeParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                  {
+                    "$type": "FunctionTypeParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                ],
+                "returnType": {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "Number",
+                  },
+                },
+              },
+            },
+            "value": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "x",
+                    },
+                    "operator": {
+                      "$type": "AdditionOperator",
+                      "text": "+",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "y",
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "x",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
+                      },
+                    },
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "y",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
+                      },
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function returning array type", async () => {
+      const statements = await snapshotTest(`
+        fun getNumbers(): String[] {
+          return ["hello"];
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "ArrayLiteral",
+                    "elements": [
+                      {
+                        "$type": "StringLiteral",
+                        "text": "hello",
+                      },
+                    ],
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "getNumbers",
+            },
+            "parameters": [],
+            "returnType": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "PrimitiveType",
+                "name": "String",
+              },
+            },
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("Literal Types", () => {
+    it("parses true literal type", async () => {
+      const statements = await snapshotTest(`
+        let isReady: true = true;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "isReady",
+            },
+            "type": {
+              "$type": "BooleanLiteralType",
+              "text": "true",
+            },
+            "value": {
+              "$type": "BooleanLiteral",
+              "text": "true",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses false literal type", async () => {
+      const statements = await snapshotTest(`
+        let isDisabled: false = false;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "isDisabled",
+            },
+            "type": {
+              "$type": "BooleanLiteralType",
+              "text": "false",
+            },
+            "value": {
+              "$type": "BooleanLiteral",
+              "text": "false",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses string literal type", async () => {
+      const statements = await snapshotTest(`
+        let status: "pending" = "pending";
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "status",
+            },
+            "type": {
+              "$type": "StringLiteralType",
+              "text": "pending",
+            },
+            "value": {
+              "$type": "StringLiteral",
+              "text": "pending",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses number literal type", async () => {
+      const statements = await snapshotTest(`
+        let version: 42 = 42;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "version",
+            },
+            "type": {
+              "$type": "NumberLiteralType",
+              "text": "42",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "42",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses float literal type", async () => {
+      const statements = await snapshotTest(`
+        let pi: 3.14 = 3.14;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "pi",
+            },
+            "type": {
+              "$type": "NumberLiteralType",
+              "text": "3.14",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "3.14",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function with literal type parameter", async () => {
+      const statements = await snapshotTest(`
+        fun handleStatus(status: "success"): Boolean {
+          return true;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "BooleanLiteral",
+                    "text": "true",
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "handleStatus",
+            },
+            "parameters": [
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "status",
+                },
+                "type": {
+                  "$type": "StringLiteralType",
+                  "text": "success",
+                },
+              },
+            ],
+            "returnType": {
+              "$type": "PrimitiveType",
+              "name": "Boolean",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses array of literal types", async () => {
+      const statements = await snapshotTest(`
+        let states: "pending"[] = ["pending"];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "states",
+            },
+            "type": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "StringLiteralType",
+                "text": "pending",
+              },
+            },
+            "value": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "StringLiteral",
+                  "text": "pending",
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses literal type in function return", async () => {
+      const statements = await snapshotTest(`
+        fun getStatus(): "ready" {
+          return "ready";
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "StringLiteral",
+                    "text": "ready",
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "getStatus",
+            },
+            "parameters": [],
+            "returnType": {
+              "$type": "StringLiteralType",
+              "text": "ready",
+            },
+          },
+        ]
+      `);
+    });
   });
 
   async function snapshotTest(source: string) {

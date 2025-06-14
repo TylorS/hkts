@@ -25,7 +25,8 @@ ExpressionStatement:
 // =============================================
 Declaration:
     FunctionDeclaration |
-    LetDeclaration;
+    LetDeclaration | 
+    DataDeclaration;
 
 FunctionDeclaration:
     (exported?="export")?
@@ -68,6 +69,27 @@ Comment:
 
 MultiLineComment:
     text=MULTI_LINE_COMMENT;
+
+DataDeclaration:
+    (exported?="export")? "data" name=Identifier (parameters+=Identifier*)? "=" (constructors+=ConstructorDeclaration ("|" constructors+=ConstructorDeclaration)*)?;
+
+ConstructorDeclaration:
+    VoidConstructor |
+    TupleConstructor |
+    ObjectConstructor;
+
+VoidConstructor:
+    name=Identifier;
+
+TupleConstructor:
+    name=Identifier "(" (parameters+=TupleConstructorParameter ("," parameters+=TupleConstructorParameter)*)? ")";
+
+TupleConstructorParameter:
+    type=Type |
+    name=Identifier ":" value=Expression;
+
+ObjectConstructor:
+    name=Identifier "(" (parameters+=PropertyType ("," parameters+=PropertyType)*)? ")";
 
 // =============================================
 // Statements
@@ -154,7 +176,8 @@ PrimaryExpression:
     ObjectLiteral |
     FunctionExpression |
     CallExpression |
-    MemberExpression;
+    MemberExpression |
+    "(" Expression ")";
 
 // =============================================
 // Member Expression
@@ -217,9 +240,19 @@ Property:
 // Types
 // =============================================
 Type:
+    PostfixType;
+
+PostfixType:
+    PrimaryType ({infer ArrayType.elementType=current} "[]")*;
+
+PrimaryType:
     FunctionType |
     PrimitiveType |
-    TypeReference;
+    LiteralType |
+    TypeReference |
+    ObjectType |
+    TupleType |
+    "(" Type ")";
 
 FunctionType:
     "(" (parameters+=FunctionTypeParameter ("," parameters+=FunctionTypeParameter)*)? ")" "=>" returnType=Type;
@@ -228,7 +261,34 @@ FunctionTypeParameter:
     (name=Identifier ":")? type=Type;
 
 PrimitiveType:
-    name=("String" | "Number" | "Boolean" | "Unit");
+    name=("String" | "Int" | "Int64" | "BigInt" | "Float32" | "Float64" | "BigDecimal" | "Boolean" | "Unit");
+
+LiteralType:
+    BooleanLiteralType |
+    StringLiteralType |
+    NumberLiteralType;
+
+BooleanLiteralType:
+    text=BOOLEAN;
+
+StringLiteralType:
+    text=STRING;
+
+NumberLiteralType:
+    text=NUMBER |
+    text=FLOAT;
+
+ObjectType:
+    "{" (properties+=PropertyType ("," properties+=PropertyType)*)? "}";
+
+PropertyType:
+    key=Identifier ":" type=Type;
+
+TupleType:
+    "[" (types+=(Type | SpreadType) ("," types+=(Type | SpreadType))*)? "]";
+
+SpreadType:
+    "..." type=Type;
 
 TypeReference:
     name=Identifier;
@@ -238,8 +298,8 @@ TypeReference:
 // =============================================
 terminal BOOLEAN: /true|false/;
 terminal STRING: /"[^"]*"/ | /'[^']*'/;
-terminal NUMBER: /[0-9]+/;
 terminal FLOAT: /[0-9]+\.[0-9]+/;
+terminal NUMBER: /[0-9]+/;
 terminal ID: /[a-zA-Z_][a-zA-Z0-9_]*/;
 terminal SINGLE_LINE_COMMENT: /\/\/[^\n\r]*/;
 terminal MULTI_LINE_COMMENT: /\/\*[\s\S]*?\*\//;
