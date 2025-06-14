@@ -26,7 +26,8 @@ ExpressionStatement:
 Declaration:
     FunctionDeclaration |
     LetDeclaration | 
-    DataDeclaration;
+    DataDeclaration |
+    TypeAliasDeclaration;
 
 FunctionDeclaration:
     (exported?="export")?
@@ -71,7 +72,7 @@ MultiLineComment:
     text=MULTI_LINE_COMMENT;
 
 DataDeclaration:
-    (exported?="export")? "data" name=Identifier (parameters+=Identifier*)? "=" (constructors+=ConstructorDeclaration ("|" constructors+=ConstructorDeclaration)*)?;
+    (exported?="export")? "data" name=Identifier parameters=TypeParameterList? "=" (constructors+=ConstructorDeclaration ("|" constructors+=ConstructorDeclaration)*)?;
 
 ConstructorDeclaration:
     VoidConstructor |
@@ -90,6 +91,9 @@ TupleConstructorParameter:
 
 ObjectConstructor:
     name=Identifier "(" (parameters+=PropertyType ("," parameters+=PropertyType)*)? ")";
+
+TypeAliasDeclaration:
+    (exported?="export")? "type" name=Identifier parameters=TypeParameterList? "=" aliasType=Type ";";
 
 // =============================================
 // Statements
@@ -253,6 +257,12 @@ Property:
 Type:
     PostfixType;
 
+TypeParameterList:
+    "<" (parameters+=TypeParameter ("," parameters+=TypeParameter)*)? ">";
+
+TypeParameter:
+    name=Identifier (":" type=Type)?;
+
 PostfixType:
     PrimaryType ({infer ArrayType.elementType=current} "[]")*;
 
@@ -272,7 +282,7 @@ FunctionTypeParameter:
     (name=Identifier ":")? type=Type;
 
 PrimitiveType:
-    name=("String" | "Int" | "Int64" | "BigInt" | "Float32" | "Float64" | "BigDecimal" | "Boolean" | "Unit");
+    name=("String" | "Int" | "Int64" | "BigInt" | "Float32" | "Float64" | "BigDecimal" | "Boolean" | "Unit" | "!" | "{}");
 
 LiteralType:
     BooleanLiteralType |
@@ -301,7 +311,7 @@ BigDecimalLiteralType:
     text=BIGDECIMAL;
 
 ObjectType:
-    "{" (properties+=PropertyType ("," properties+=PropertyType)*)? "}";
+    "{" (properties+=(PropertyType | SpreadType) ("," properties+=(PropertyType | SpreadType))*)? "}";
 
 PropertyType:
     key=Identifier ":" type=Type;

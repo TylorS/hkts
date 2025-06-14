@@ -3443,6 +3443,681 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("Type Alias Declarations", () => {
+    it("parses simple type alias", async () => {
+      const statements = await snapshotTest(`
+        type MyString = String;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "PrimitiveType",
+              "name": "String",
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "MyString",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses object type alias", async () => {
+      const statements = await snapshotTest(`
+        type Point = { x: Number, y: Number };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ObjectType",
+              "properties": [
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
+                  },
+                },
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "y",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Point",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function type alias", async () => {
+      const statements = await snapshotTest(`
+        type Handler = (event: String) => Boolean;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "event",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Boolean",
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Handler",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses array type alias", async () => {
+      const statements = await snapshotTest(`
+        type StringList = String[];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "PrimitiveType",
+                "name": "String",
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "StringList",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses exported type alias", async () => {
+      const statements = await snapshotTest(`
+        export type PublicType = Number;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Number",
+              },
+            },
+            "exported": true,
+            "name": {
+              "$type": "Identifier",
+              "id": "PublicType",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses complex nested type alias", async () => {
+      const statements = await snapshotTest(`
+        type ComplexType = { 
+          name: String, 
+          handler: (String) => Boolean,
+          items: Number[]
+        };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ObjectType",
+              "properties": [
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "handler",
+                  },
+                  "type": {
+                    "$type": "FunctionType",
+                    "parameters": [
+                      {
+                        "$type": "FunctionTypeParameter",
+                        "type": {
+                          "$type": "PrimitiveType",
+                          "name": "String",
+                        },
+                      },
+                    ],
+                    "returnType": {
+                      "$type": "PrimitiveType",
+                      "name": "Boolean",
+                    },
+                  },
+                },
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "items",
+                  },
+                  "type": {
+                    "$type": "ArrayType",
+                    "elementType": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "ComplexType",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses literal type alias", async () => {
+      const statements = await snapshotTest(`
+        type Status = "pending";
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "StringLiteralType",
+              "text": "pending",
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Status",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses type alias using another type alias", async () => {
+      const statements = await snapshotTest(`
+        type UserId = Number;
+        type User = { id: UserId, name: String };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Number",
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "UserId",
+            },
+          },
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ObjectType",
+              "properties": [
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "id",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "UserId",
+                    },
+                  },
+                },
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "User",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses type alias with single type parameter", async () => {
+      const statements = await snapshotTest(`
+        type Box<T> = { value: T };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ObjectType",
+              "properties": [
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "value",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "T",
+                    },
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Box",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses type alias with multiple type parameters", async () => {
+      const statements = await snapshotTest(`
+        type Pair<A, B> = { first: A, second: B };
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ObjectType",
+              "properties": [
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "first",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "A",
+                    },
+                  },
+                },
+                {
+                  "$type": "PropertyType",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "second",
+                  },
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "B",
+                    },
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Pair",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "A",
+                  },
+                },
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "B",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses exported type alias with type parameters", async () => {
+      const statements = await snapshotTest(`
+        export type Result<T> = T[];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "T",
+                },
+              },
+            },
+            "exported": true,
+            "name": {
+              "$type": "Identifier",
+              "id": "Result",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses type alias with type parameter in function type", async () => {
+      const statements = await snapshotTest(`
+        type Mapper<T, U> = (T) => U;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "T",
+                    },
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "U",
+                },
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Mapper",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "U",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses type alias with type parameter in array type", async () => {
+      const statements = await snapshotTest(`
+        type List<T> = T[];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "ArrayType",
+              "elementType": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "T",
+                },
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "List",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses complex type alias with multiple type parameters", async () => {
+      const statements = await snapshotTest(`
+        type Transform<T, U, V> = (T, U) => V;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "FunctionType",
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "T",
+                    },
+                  },
+                },
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "U",
+                    },
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "V",
+                },
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Transform",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "U",
+                  },
+                },
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "V",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
