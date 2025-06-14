@@ -163,7 +163,7 @@ describe("Parsing tests", () => {
 
   it("parses function declaration", async () => {
     const statements = await snapshotTest(`
-        function greet(name: string): string {
+        fun greet(name: string): string {
             return "Hello, " + name;
         }
     `);
@@ -172,6 +172,7 @@ describe("Parsing tests", () => {
       [
         {
           "$type": "FunctionDeclaration",
+          "async": false,
           "block": {
             "$type": "Block",
             "statements": [
@@ -195,6 +196,8 @@ describe("Parsing tests", () => {
               },
             ],
           },
+          "exported": false,
+          "generator": false,
           "name": {
             "$type": "Identifier",
             "id": "greet",
@@ -966,6 +969,311 @@ describe("Parsing tests", () => {
                   },
                 },
               ],
+            },
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("let declarations", () => {
+    it("parses simple let declaration", async () => {
+      const statements = await snapshotTest(`
+        let x = 42;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "x",
+            },
+            "value": {
+              "$type": "NumberLiteral",
+              "text": "42",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses array destructuring", async () => {
+      const statements = await snapshotTest(`
+        let [a, b, c] = [1, 2, 3];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "ArrayDestructuring",
+              "destructured": [
+                {
+                  "$type": "Identifier",
+                  "id": "a",
+                },
+                {
+                  "$type": "Identifier",
+                  "id": "b",
+                },
+                {
+                  "$type": "Identifier",
+                  "id": "c",
+                },
+              ],
+            },
+            "value": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "NumberLiteral",
+                  "text": "1",
+                },
+                {
+                  "$type": "NumberLiteral",
+                  "text": "2",
+                },
+                {
+                  "$type": "NumberLiteral",
+                  "text": "3",
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses object destructuring - shorthand", async () => {
+      const statements = await snapshotTest(`
+        let { name, age } = person;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "ObjectDestructuring",
+              "properties": [
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                },
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "age",
+                  },
+                },
+              ],
+            },
+            "value": {
+              "$type": "Identifier",
+              "id": "person",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses object destructuring - with renaming", async () => {
+      const statements = await snapshotTest(`
+        let { name: fullName, age: years } = person;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "ObjectDestructuring",
+              "properties": [
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "target": {
+                    "$type": "Identifier",
+                    "id": "fullName",
+                  },
+                },
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "age",
+                  },
+                  "target": {
+                    "$type": "Identifier",
+                    "id": "years",
+                  },
+                },
+              ],
+            },
+            "value": {
+              "$type": "Identifier",
+              "id": "person",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses object destructuring - mixed", async () => {
+      const statements = await snapshotTest(`
+        let { name, age: years, city } = person;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "ObjectDestructuring",
+              "properties": [
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                },
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "age",
+                  },
+                  "target": {
+                    "$type": "Identifier",
+                    "id": "years",
+                  },
+                },
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "city",
+                  },
+                },
+              ],
+            },
+            "value": {
+              "$type": "Identifier",
+              "id": "person",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses object destructuring - with rest spread", async () => {
+      const statements = await snapshotTest(`
+        let { name, ...rest } = person;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "ObjectDestructuring",
+              "properties": [
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                },
+                {
+                  "$type": "RestSpread",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "rest",
+                  },
+                },
+              ],
+            },
+            "value": {
+              "$type": "Identifier",
+              "id": "person",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses object destructuring - complex", async () => {
+      const statements = await snapshotTest(`
+        let { name: fullName, age, city: location, ...others } = person;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "ObjectDestructuring",
+              "properties": [
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                  "target": {
+                    "$type": "Identifier",
+                    "id": "fullName",
+                  },
+                },
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "age",
+                  },
+                },
+                {
+                  "$type": "PropertyPattern",
+                  "key": {
+                    "$type": "Identifier",
+                    "id": "city",
+                  },
+                  "target": {
+                    "$type": "Identifier",
+                    "id": "location",
+                  },
+                },
+                {
+                  "$type": "RestSpread",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "others",
+                  },
+                },
+              ],
+            },
+            "value": {
+              "$type": "Identifier",
+              "id": "person",
             },
           },
         ]

@@ -1,21 +1,21 @@
 # Higher-Kinded TypeScript Grammar Features
 
 ## Core Language Features
-- [ ] SourceFile with multiple statements
+- [x] SourceFile with multiple statements
 
 ## Statement Types
 ### Function Declarations
-- [ ] Basic function declarations
-- [ ] Parameters with type annotations
-- [ ] Return types
-- [ ] Function bodies with blocks
+- [x] Basic function declarations
+- [x] Parameters with type annotations
+- [x] Return types
+- [x] Function bodies with blocks
 
 ### Variable Declarations
-- [ ] `let`, `const`, `var` declarations
-- [ ] Type annotations
-- [ ] Initializers
-- [ ] Object destructuring patterns
-- [ ] Array destructuring patterns
+- [x] `let`, `const`, `var` declarations
+- [x] Type annotations
+- [x] Initializers
+- [x] Object destructuring patterns
+- [x] Array destructuring patterns
 
 ### Class Declarations
 - [ ] Class name and body

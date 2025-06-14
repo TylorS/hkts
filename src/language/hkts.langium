@@ -22,13 +22,14 @@ ExpressionStatement:
 // Declarations
 // =============================================
 Declaration:
-    FunctionDeclaration;
+    FunctionDeclaration |
+    LetDeclaration;
 
 FunctionDeclaration:
-    exported="export"? 
-    (async="async")? 
-    "function" 
-    (generator="*")? 
+    (exported?="export")?
+    (async?="async")?
+    "fun" 
+    (generator?="*")? 
     name=Identifier 
     "(" 
     (parameters+=ParameterDeclaration ("," parameters+=ParameterDeclaration)*)? 
@@ -43,6 +44,24 @@ ParameterDeclaration:
 
 Block:
     "{" statements+=Statement* "}";
+
+LetDeclaration:
+    (exported?="export")? "let" name=(Identifier|ArrayDestructuring|ObjectDestructuring) (":" type=Type)? "=" value=Expression ";"?;
+
+ArrayDestructuring:
+    "[" destructured+=Identifier ("," destructured+=Identifier)* "]";
+
+ObjectDestructuring:
+    "{" (properties+=ObjectDestructuringProperty ("," properties+=ObjectDestructuringProperty)*)? "}";
+
+ObjectDestructuringProperty:
+    RestSpread | PropertyPattern;
+
+PropertyPattern:
+    key=Identifier (":" target=Identifier)?;
+
+RestSpread:
+    "..." name=Identifier;
 
 // =============================================
 // Statements
