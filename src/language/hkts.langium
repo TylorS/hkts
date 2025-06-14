@@ -153,13 +153,21 @@ PrimaryExpression:
     ArrayLiteral |
     ObjectLiteral |
     FunctionExpression |
-    CallExpression;
+    CallExpression |
+    MemberExpression;
+
+// =============================================
+// Member Expression
+// =============================================
+MemberExpression:
+    object=Identifier "." property=Identifier |
+    object=Identifier "[" property=Expression "]";
 
 // =============================================
 // Call Expression
 // =============================================
 CallExpression:
-    callee=Identifier "(" (arguments+=Expression ("," arguments+=Expression)*)? ")";
+    callee=(Identifier|MemberExpression) "(" (arguments+=Expression ("," arguments+=Expression)*)? ")";
 
 // =============================================
 // Function Expression

@@ -2543,7 +2543,207 @@ describe("Parsing tests", () => {
           },
         ]
       `);
+         });
+   });
+
+  describe("Member Expressions", () => {
+    it("parses dot notation member access", async () => {
+      const statements = await snapshotTest(`
+        user.name;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MemberExpression",
+              "object": {
+                "$type": "Identifier",
+                "id": "user",
+              },
+              "property": {
+                "$type": "Identifier",
+                "id": "name",
+              },
+            },
+          },
+        ]
+      `);
     });
+
+    it("parses bracket notation member access with string", async () => {
+      const statements = await snapshotTest(`
+        user["name"];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MemberExpression",
+              "object": {
+                "$type": "Identifier",
+                "id": "user",
+              },
+              "property": {
+                "$type": "StringLiteral",
+                "text": "name",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses bracket notation member access with number", async () => {
+      const statements = await snapshotTest(`
+        items[0];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MemberExpression",
+              "object": {
+                "$type": "Identifier",
+                "id": "items",
+              },
+              "property": {
+                "$type": "NumberLiteral",
+                "text": "0",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses bracket notation member access with variable", async () => {
+      const statements = await snapshotTest(`
+        obj[key];
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "MemberExpression",
+              "object": {
+                "$type": "Identifier",
+                "id": "obj",
+              },
+              "property": {
+                "$type": "Identifier",
+                "id": "key",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses member expression in function call", async () => {
+      const statements = await snapshotTest(`
+        process(user.name);
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "CallExpression",
+              "arguments": [
+                {
+                  "$type": "MemberExpression",
+                  "object": {
+                    "$type": "Identifier",
+                    "id": "user",
+                  },
+                  "property": {
+                    "$type": "Identifier",
+                    "id": "name",
+                  },
+                },
+              ],
+              "callee": {
+                "$type": "Identifier",
+                "id": "process",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses member expression in assignment", async () => {
+      const statements = await snapshotTest(`
+        let name = user.name;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "name",
+            },
+            "value": {
+              "$type": "MemberExpression",
+              "object": {
+                "$type": "Identifier",
+                "id": "user",
+              },
+              "property": {
+                "$type": "Identifier",
+                "id": "name",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it('parses member expression function call', async () => { 
+      const statements = await snapshotTest(`
+        user.greet("Hello");
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "CallExpression",
+              "arguments": [
+                {
+                  "$type": "StringLiteral",
+                  "text": "Hello",
+                },
+              ],
+              "callee": {
+                "$type": "MemberExpression",
+                "object": {
+                  "$type": "Identifier",
+                  "id": "user",
+                },
+                "property": {
+                  "$type": "Identifier",
+                  "id": "greet",
+                },
+              },
+            },
+          },
+        ]
+      `);
+    })
   });
 
   async function snapshotTest(source: string) {
