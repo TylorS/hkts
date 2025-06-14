@@ -86,11 +86,10 @@ TupleConstructor:
     name=Identifier "(" (parameters+=TupleConstructorParameter ("," parameters+=TupleConstructorParameter)*)? ")";
 
 TupleConstructorParameter:
-    type=Type |
-    name=Identifier ":" value=Expression;
+    (name=Identifier ":")? type=Type;
 
 ObjectConstructor:
-    name=Identifier "(" (parameters+=PropertyType ("," parameters+=PropertyType)*)? ")";
+    name=Identifier "{" (parameters+=PropertyType ("," parameters+=PropertyType)*)? "}";
 
 TypeAliasDeclaration:
     (exported?="export")? "type" name=Identifier parameters=TypeParameterList? "=" aliasType=Type ";";

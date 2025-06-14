@@ -4118,6 +4118,566 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("Data Declarations", () => {
+    it("parses simple enum-like data declaration", async () => {
+      const statements = await snapshotTest(`
+        data Color = Red | Green | Blue
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Red",
+                },
+              },
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Green",
+                },
+              },
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Blue",
+                },
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Color",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with single constructor", async () => {
+      const statements = await snapshotTest(`
+        data Status = Active
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Active",
+                },
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Status",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with tuple constructors", async () => {
+      const statements = await snapshotTest(`
+        data Point = Point(Number, Number)
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Point",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Point",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with object constructors", async () => {
+      const statements = await snapshotTest(`
+        data Person = Person{name: String, age: Number}
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "ObjectConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Person",
+                },
+                "parameters": [
+                  {
+                    "$type": "PropertyType",
+                    "key": {
+                      "$type": "Identifier",
+                      "id": "name",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                  {
+                    "$type": "PropertyType",
+                    "key": {
+                      "$type": "Identifier",
+                      "id": "age",
+                    },
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Person",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with mixed constructors", async () => {
+      const statements = await snapshotTest(`
+        data Shape = Circle(radius: Number) | Rectangle(Number, Number) | Point
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Circle",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "radius",
+                    },
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                ],
+              },
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Rectangle",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                ],
+              },
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Point",
+                },
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Shape",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses exported data declaration", async () => {
+      const statements = await snapshotTest(`
+        export data Result = Success | Error
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Success",
+                },
+              },
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Error",
+                },
+              },
+            ],
+            "exported": true,
+            "name": {
+              "$type": "Identifier",
+              "id": "Result",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with complex tuple constructor", async () => {
+      const statements = await snapshotTest(`
+        data Response = Response(String, Number, Boolean)
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Response",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "Boolean",
+                    },
+                  },
+                ],
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Response",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with complex object constructor", async () => {
+      const statements = await snapshotTest(`
+        data User = User{id: Number, name: String, email: String, active: Boolean}
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "ObjectConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "User",
+                },
+                "parameters": [
+                  {
+                    "$type": "PropertyType",
+                    "key": {
+                      "$type": "Identifier",
+                      "id": "id",
+                    },
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                  {
+                    "$type": "PropertyType",
+                    "key": {
+                      "$type": "Identifier",
+                      "id": "name",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                  {
+                    "$type": "PropertyType",
+                    "key": {
+                      "$type": "Identifier",
+                      "id": "email",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                  {
+                    "$type": "PropertyType",
+                    "key": {
+                      "$type": "Identifier",
+                      "id": "active",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "Boolean",
+                    },
+                  },
+                ],
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "User",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses data declaration with type parameters", async () => {
+      const statements = await snapshotTest(`
+        data Maybe<T> = None | Some(T)
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "None",
+                },
+              },
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Some",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "T",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Maybe",
+            },
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "T",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses complex data declaration with multiple constructor types", async () => {
+      const statements = await snapshotTest(`
+        data Option = None | Some(String) | Complex(value: String, meta: Number)
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "DataDeclaration",
+            "constructors": [
+              {
+                "$type": "VoidConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "None",
+                },
+              },
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Some",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                ],
+              },
+              {
+                "$type": "TupleConstructor",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Complex",
+                },
+                "parameters": [
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "value",
+                    },
+                    "type": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                  {
+                    "$type": "TupleConstructorParameter",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "meta",
+                    },
+                    "type": {
+                      "$type": "TypeReference",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "Number",
+                      },
+                    },
+                  },
+                ],
+              },
+            ],
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "Option",
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
