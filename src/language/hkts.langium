@@ -53,11 +53,63 @@ ReturnStatement:
 // Expressions
 // =============================================
 Expression:
-    BinaryExpression;
+    EqualityExpression;
 
-BinaryExpression:
-    PrimaryExpression ({infer BinaryExpression.left=current} operator=('+' | '-' | '*' | '/' | '==' | '!=' | '<' | '>' | '<=' | '>=') right=PrimaryExpression)*;
+EqualityExpression:
+    ComparisonExpression ({infer BinaryExpression.left=current} operator=(EqualityOperator | InequalityOperator) right=ComparisonExpression)*;
 
+ComparisonExpression:
+    AdditiveExpression ({infer BinaryExpression.left=current} operator=ComparisonOperator right=AdditiveExpression)*;
+
+AdditiveExpression:
+    MultiplicativeExpression ({infer BinaryExpression.left=current} operator=(AdditionOperator | SubtractionOperator) right=MultiplicativeExpression)*;
+
+MultiplicativeExpression:
+    PrimaryExpression ({infer BinaryExpression.left=current} operator=(MultiplicationOperator | DivisionOperator) right=PrimaryExpression)*;
+
+// =============================================
+// Operators
+// =============================================
+
+AdditionOperator:
+    text='+';
+
+SubtractionOperator:
+    text='-';
+
+MultiplicationOperator:
+    text='*';
+
+DivisionOperator:
+    text='/';
+
+EqualityOperator:
+    text='==';
+
+InequalityOperator:
+    text='!=';
+
+ComparisonOperator:
+    operator=LessThanOperator |
+    operator=GreaterThanOperator |
+    operator=LessThanOrEqualOperator |
+    operator=GreaterThanOrEqualOperator;
+
+LessThanOperator:
+    text='<';
+
+GreaterThanOperator:
+    text='>';
+
+LessThanOrEqualOperator:
+    text='<=';
+
+GreaterThanOrEqualOperator:
+    text='>=';
+
+// =============================================
+// Primary Expressions
+// =============================================
 PrimaryExpression:
     Literal |
     Identifier |

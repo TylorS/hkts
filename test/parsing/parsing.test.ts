@@ -183,7 +183,10 @@ describe("Parsing tests", () => {
                     "$type": "StringLiteral",
                     "text": "Hello, ",
                   },
-                  "operator": "+",
+                  "operator": {
+                    "$type": "AdditionOperator",
+                    "text": "+",
+                  },
                   "right": {
                     "$type": "Identifier",
                     "id": "name",
@@ -218,14 +221,358 @@ describe("Parsing tests", () => {
     `);
   });
 
+  describe("binary expressions", () => {
+    it("parses addition", async () => {
+      const statements = await snapshotTest(`
+        1 + 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "AdditionOperator",
+                "text": "+",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses subtraction", async () => {
+      const statements = await snapshotTest(`
+        1 - 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "SubtractionOperator",
+                "text": "-",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses multiplication", async () => {
+      const statements = await snapshotTest(`
+        1 * 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "MultiplicationOperator",
+                "text": "*",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses division", async () => {
+      const statements = await snapshotTest(`
+        1 / 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "DivisionOperator",
+                "text": "/",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses equality", async () => {
+      const statements = await snapshotTest(`
+        1 == 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "EqualityOperator",
+                "text": "==",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses inequality", async () => {
+      const statements = await snapshotTest(`
+        1 != 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "InequalityOperator",
+                "text": "!=",
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses less than", async () => {
+      const statements = await snapshotTest(`
+        1 < 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "LessThanOperator",
+                  "text": "<",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses greater than", async () => {
+      const statements = await snapshotTest(`
+        1 > 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "GreaterThanOperator",
+                  "text": ">",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses less than or equal to", async () => {
+      const statements = await snapshotTest(`
+        1 <= 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "LessThanOrEqualOperator",
+                  "text": "<=",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses greater than or equal to", async () => {
+      const statements = await snapshotTest(`
+        1 >= 2
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "ComparisonOperator",
+                "operator": {
+                  "$type": "GreaterThanOrEqualOperator",
+                  "text": ">=",
+                },
+              },
+              "right": {
+                "$type": "NumberLiteral",
+                "text": "2",
+              },
+            },
+          },
+        ]
+      `)
+    });
+
+    it("parses multiple binary expressions", async () => {
+      const statements = await snapshotTest(`
+        1 + 2 * 3
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "NumberLiteral",
+                "text": "1",
+              },
+              "operator": {
+                "$type": "AdditionOperator",
+                "text": "+",
+              },
+              "right": {
+                "$type": "BinaryExpression",
+                "left": {
+                  "$type": "NumberLiteral",
+                  "text": "2",
+                },
+                "operator": {
+                  "$type": "MultiplicationOperator",
+                  "text": "*",
+                },
+                "right": {
+                  "$type": "NumberLiteral",
+                  "text": "3",
+                },
+              },
+            },
+          },
+        ]
+      `)
+    });
+  });
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
     expect(checkDocumentValid(document)).toBe(undefined);
 
-    return document.parseResult.value.statements.map(
-      recursivelyRemoveCircularReferences
-    );
+    const sourceFile = document.parseResult.value;
+
+    return sourceFile.statements.map(recursivelyRemoveCircularReferences);
   }
 });
 
