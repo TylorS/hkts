@@ -5943,59 +5943,64 @@ describe("Parsing tests", () => {
       expect(statements).toMatchInlineSnapshot(`
         [
           {
-            "$type": "InstanceDeclaration",
+            "$type": "LetDeclaration",
             "exported": false,
-            "implementations": [
-              {
-                "$type": "InstanceImplementation",
-                "name": {
-                  "$type": "Identifier",
-                  "id": "show",
-                },
-                "value": {
-                  "$type": "FunctionExpression",
-                  "body": {
-                    "$type": "Identifier",
-                    "id": "value",
-                  },
-                  "parameters": [
-                    {
-                      "$type": "ParameterDeclaration",
-                      "name": {
-                        "$type": "Identifier",
-                        "id": "value",
-                      },
-                      "type": {
-                        "$type": "PrimitiveType",
-                        "name": "String",
-                      },
-                    },
-                  ],
-                  "returnType": {
-                    "$type": "PrimitiveType",
-                    "name": "String",
-                  },
-                },
-              },
-            ],
             "name": {
               "$type": "Identifier",
               "id": "StringShow",
             },
-            "typeclass": {
-              "$type": "TypeReference",
-              "name": {
-                "$type": "Identifier",
-                "id": "Show",
-              },
-              "typeArguments": {
-                "$type": "TypeArgumentList",
-                "arguments": [
-                  {
-                    "$type": "PrimitiveType",
-                    "name": "String",
+            "value": {
+              "$type": "InstanceExpression",
+              "extends": [],
+              "implementations": [
+                {
+                  "$type": "InstanceImplementation",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "show",
                   },
-                ],
+                  "parameters": [],
+                  "value": {
+                    "$type": "FunctionExpression",
+                    "body": {
+                      "$type": "Identifier",
+                      "id": "value",
+                    },
+                    "parameters": [
+                      {
+                        "$type": "ParameterDeclaration",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "value",
+                        },
+                        "type": {
+                          "$type": "PrimitiveType",
+                          "name": "String",
+                        },
+                      },
+                    ],
+                    "returnType": {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  },
+                },
+              ],
+              "typeclass": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "Show",
+                },
+                "typeArguments": {
+                  "$type": "TypeArgumentList",
+                  "arguments": [
+                    {
+                      "$type": "PrimitiveType",
+                      "name": "String",
+                    },
+                  ],
+                },
               },
             },
           },
@@ -6016,6 +6021,7 @@ describe("Parsing tests", () => {
           {
             "$type": "InstanceDeclaration",
             "exported": false,
+            "extends": [],
             "implementations": [
               {
                 "$type": "InstanceImplementation",
@@ -6023,6 +6029,7 @@ describe("Parsing tests", () => {
                   "$type": "Identifier",
                   "id": "compare",
                 },
+                "parameters": [],
                 "value": {
                   "$type": "FunctionExpression",
                   "body": {
@@ -6076,6 +6083,7 @@ describe("Parsing tests", () => {
                   "$type": "Identifier",
                   "id": "lessThan",
                 },
+                "parameters": [],
                 "value": {
                   "$type": "FunctionExpression",
                   "body": {
@@ -6164,6 +6172,7 @@ describe("Parsing tests", () => {
           {
             "$type": "InstanceDeclaration",
             "exported": true,
+            "extends": [],
             "implementations": [
               {
                 "$type": "InstanceImplementation",
@@ -6171,6 +6180,7 @@ describe("Parsing tests", () => {
                   "$type": "Identifier",
                   "id": "map",
                 },
+                "parameters": [],
                 "value": {
                   "$type": "FunctionExpression",
                   "body": {
@@ -6316,6 +6326,7 @@ describe("Parsing tests", () => {
           {
             "$type": "InstanceDeclaration",
             "exported": false,
+            "extends": [],
             "implementations": [
               {
                 "$type": "InstanceImplementation",
@@ -6323,6 +6334,7 @@ describe("Parsing tests", () => {
                   "$type": "Identifier",
                   "id": "combine",
                 },
+                "parameters": [],
                 "value": {
                   "$type": "FunctionExpression",
                   "body": {
@@ -6376,6 +6388,7 @@ describe("Parsing tests", () => {
                   "$type": "Identifier",
                   "id": "isEmpty",
                 },
+                "parameters": [],
                 "value": {
                   "$type": "BooleanLiteral",
                   "text": "true",
@@ -7764,6 +7777,817 @@ describe("Parsing tests", () => {
               "target": {
                 "$type": "Identifier",
                 "id": "status",
+              },
+            },
+          },
+        ]
+      `);
+    });
+  });
+
+  describe("Effect System", () => {
+    it("parses effect declaration", async () => {
+      const statements = await snapshotTest(`
+        effect IO {
+          print: (String) => Unit
+          read: () => String
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "EffectDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "IO",
+            },
+            "operations": [
+              {
+                "$type": "EffectOperation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "print",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "String",
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Unit",
+                  },
+                },
+              },
+              {
+                "$type": "EffectOperation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "read",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              },
+            ],
+          },
+        ]
+      `);
+    });
+
+    it("parses parameterized effect declaration", async () => {
+      const statements = await snapshotTest(`
+        effect State<S> {
+          get: () => S
+          put: (S) => Unit
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "EffectDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "State",
+            },
+            "operations": [
+              {
+                "$type": "EffectOperation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "get",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "S",
+                    },
+                  },
+                },
+              },
+              {
+                "$type": "EffectOperation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "put",
+                },
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "S",
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Unit",
+                  },
+                },
+              },
+            ],
+            "parameters": {
+              "$type": "TypeParameterList",
+              "parameters": [
+                {
+                  "$type": "TypeParameter",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "S",
+                  },
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses handler expression", async () => {
+      const statements = await snapshotTest(`
+        handle State<Int> {
+          let ref = Ref(0)
+          get() => ref.get(),
+          put(newValue) => ref.set(newValue)
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "HandlerExpression",
+              "bindings": [
+                {
+                  "$type": "LetDeclaration",
+                  "exported": false,
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "ref",
+                  },
+                  "value": {
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "IntegerLiteral",
+                        "text": "0",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "Identifier",
+                      "id": "Ref",
+                    },
+                  },
+                },
+              ],
+              "effect": {
+                "$type": "TypeReference",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "State",
+                },
+                "typeArguments": {
+                  "$type": "TypeArgumentList",
+                  "arguments": [
+                    {
+                      "$type": "PrimitiveType",
+                      "name": "Int",
+                    },
+                  ],
+                },
+              },
+              "handlers": [
+                {
+                  "$type": "OperationHandler",
+                  "body": {
+                    "$type": "CallExpression",
+                    "arguments": [],
+                    "callee": {
+                      "$type": "MemberExpression",
+                      "object": {
+                        "$type": "Identifier",
+                        "id": "ref",
+                      },
+                      "property": {
+                        "$type": "Identifier",
+                        "id": "get",
+                      },
+                    },
+                  },
+                  "operation": {
+                    "$type": "Identifier",
+                    "id": "get",
+                  },
+                  "parameters": [],
+                },
+                {
+                  "$type": "OperationHandler",
+                  "body": {
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "Identifier",
+                        "id": "newValue",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "MemberExpression",
+                      "object": {
+                        "$type": "Identifier",
+                        "id": "ref",
+                      },
+                      "property": {
+                        "$type": "Identifier",
+                        "id": "set",
+                      },
+                    },
+                  },
+                  "operation": {
+                    "$type": "Identifier",
+                    "id": "put",
+                  },
+                  "parameters": [
+                    {
+                      "$type": "Identifier",
+                      "id": "newValue",
+                    },
+                  ],
+                },
+              ],
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses with expression", async () => {
+      const statements = await snapshotTest(`
+        computation() with StateHandler(42)
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "WithExpression",
+              "computation": {
+                "$type": "CallExpression",
+                "arguments": [],
+                "callee": {
+                  "$type": "Identifier",
+                  "id": "computation",
+                },
+              },
+              "handler": {
+                "$type": "CallExpression",
+                "arguments": [
+                  {
+                    "$type": "IntegerLiteral",
+                    "text": "42",
+                  },
+                ],
+                "callee": {
+                  "$type": "Identifier",
+                  "id": "StateHandler",
+                },
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function declaration with effect signature", async () => {
+      const statements = await snapshotTest(`
+        fun readFile(path: String): String {IO} {
+          return "file content"
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "StringLiteral",
+                    "text": "file content",
+                  },
+                },
+              ],
+            },
+            "effects": {
+              "$type": "EffectSignature",
+              "effects": [
+                {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "IO",
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "readFile",
+            },
+            "parameters": [
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "path",
+                },
+                "type": {
+                  "$type": "PrimitiveType",
+                  "name": "String",
+                },
+              },
+            ],
+            "returnType": {
+              "$type": "PrimitiveType",
+              "name": "String",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function declaration with multiple effects", async () => {
+      const statements = await snapshotTest(`
+        fun processData(data: String): String {IO, State, Exception} {
+          return data
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "Identifier",
+                    "id": "data",
+                  },
+                },
+              ],
+            },
+            "effects": {
+              "$type": "EffectSignature",
+              "effects": [
+                {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "IO",
+                  },
+                },
+                {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "State",
+                  },
+                },
+                {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "Exception",
+                  },
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "processData",
+            },
+            "parameters": [
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "data",
+                },
+                "type": {
+                  "$type": "PrimitiveType",
+                  "name": "String",
+                },
+              },
+            ],
+            "returnType": {
+              "$type": "PrimitiveType",
+              "name": "String",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function expression with effects", async () => {
+      const statements = await snapshotTest(`
+        let effectfulLambda = fun (x: Int): Int {State<Counter>} => x + 1
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "effectfulLambda",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "BinaryExpression",
+                "left": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "operator": {
+                  "$type": "AdditionOperator",
+                  "text": "+",
+                },
+                "right": {
+                  "$type": "IntegerLiteral",
+                  "text": "1",
+                },
+              },
+              "effects": {
+                "$type": "EffectSignature",
+                "effects": [
+                  {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "State",
+                    },
+                    "typeArguments": {
+                      "$type": "TypeArgumentList",
+                      "arguments": [
+                        {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "Counter",
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "x",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Int",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "Int",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses function type with effects", async () => {
+      const statements = await snapshotTest(`
+        type FileProcessor = (String) => String {IO, Exception<FileError>}
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "FunctionType",
+              "effects": {
+                "$type": "EffectSignature",
+                "effects": [
+                  {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "IO",
+                    },
+                  },
+                  {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Exception",
+                    },
+                    "typeArguments": {
+                      "$type": "TypeArgumentList",
+                      "arguments": [
+                        {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "FileError",
+                          },
+                        },
+                      ],
+                    },
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "FunctionTypeParameter",
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              ],
+              "returnType": {
+                "$type": "PrimitiveType",
+                "name": "String",
+              },
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "FileProcessor",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses empty effect signature", async () => {
+      const statements = await snapshotTest(`
+        fun pureFunction(x: Int): Int {} {
+          return x * 2
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "FunctionDeclaration",
+            "block": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ReturnStatement",
+                  "expression": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "x",
+                    },
+                    "operator": {
+                      "$type": "MultiplicationOperator",
+                      "text": "*",
+                    },
+                    "right": {
+                      "$type": "IntegerLiteral",
+                      "text": "2",
+                    },
+                  },
+                },
+              ],
+            },
+            "effects": {
+              "$type": "EffectSignature",
+              "effects": [],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "pureFunction",
+            },
+            "parameters": [
+              {
+                "$type": "ParameterDeclaration",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "type": {
+                  "$type": "PrimitiveType",
+                  "name": "Int",
+                },
+              },
+            ],
+            "returnType": {
+              "$type": "PrimitiveType",
+              "name": "Int",
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses complex effect system example", async () => {
+      const statements = await snapshotTest(`
+        let StateHandler = fun (initialValue) => handle State<Int> {
+          let ref = Ref(initialValue)
+          get() => ref.get(),
+          put(newValue) => ref.set(newValue)
+        }
+        
+        someComputation() with StateHandler(42)
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "StateHandler",
+            },
+            "value": {
+              "$type": "FunctionExpression",
+              "body": {
+                "$type": "HandlerExpression",
+                "bindings": [
+                  {
+                    "$type": "LetDeclaration",
+                    "exported": false,
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "ref",
+                    },
+                    "value": {
+                      "$type": "CallExpression",
+                      "arguments": [
+                        {
+                          "$type": "Identifier",
+                          "id": "initialValue",
+                        },
+                      ],
+                      "callee": {
+                        "$type": "Identifier",
+                        "id": "Ref",
+                      },
+                    },
+                  },
+                ],
+                "effect": {
+                  "$type": "TypeReference",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "State",
+                  },
+                  "typeArguments": {
+                    "$type": "TypeArgumentList",
+                    "arguments": [
+                      {
+                        "$type": "PrimitiveType",
+                        "name": "Int",
+                      },
+                    ],
+                  },
+                },
+                "handlers": [
+                  {
+                    "$type": "OperationHandler",
+                    "body": {
+                      "$type": "CallExpression",
+                      "arguments": [],
+                      "callee": {
+                        "$type": "MemberExpression",
+                        "object": {
+                          "$type": "Identifier",
+                          "id": "ref",
+                        },
+                        "property": {
+                          "$type": "Identifier",
+                          "id": "get",
+                        },
+                      },
+                    },
+                    "operation": {
+                      "$type": "Identifier",
+                      "id": "get",
+                    },
+                    "parameters": [],
+                  },
+                  {
+                    "$type": "OperationHandler",
+                    "body": {
+                      "$type": "CallExpression",
+                      "arguments": [
+                        {
+                          "$type": "Identifier",
+                          "id": "newValue",
+                        },
+                      ],
+                      "callee": {
+                        "$type": "MemberExpression",
+                        "object": {
+                          "$type": "Identifier",
+                          "id": "ref",
+                        },
+                        "property": {
+                          "$type": "Identifier",
+                          "id": "set",
+                        },
+                      },
+                    },
+                    "operation": {
+                      "$type": "Identifier",
+                      "id": "put",
+                    },
+                    "parameters": [
+                      {
+                        "$type": "Identifier",
+                        "id": "newValue",
+                      },
+                    ],
+                  },
+                ],
+              },
+              "parameters": [
+                {
+                  "$type": "ParameterDeclaration",
+                  "name": {
+                    "$type": "Identifier",
+                    "id": "initialValue",
+                  },
+                },
+              ],
+            },
+          },
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "WithExpression",
+              "computation": {
+                "$type": "CallExpression",
+                "arguments": [],
+                "callee": {
+                  "$type": "Identifier",
+                  "id": "someComputation",
+                },
+              },
+              "handler": {
+                "$type": "CallExpression",
+                "arguments": [
+                  {
+                    "$type": "IntegerLiteral",
+                    "text": "42",
+                  },
+                ],
+                "callee": {
+                  "$type": "Identifier",
+                  "id": "StateHandler",
+                },
               },
             },
           },

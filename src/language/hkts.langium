@@ -28,7 +28,9 @@ Declaration:
     LetDeclaration | 
     DataDeclaration |
     TypeAliasDeclaration |
-    TypeclassDeclaration;
+    TypeclassDeclaration |
+    EffectDeclaration |
+    InstanceDeclaration;
 
 FunctionDeclaration:
     (exported?="export")?
@@ -42,12 +44,12 @@ FunctionDeclaration:
     )? 
     ")" 
     (":" returnType=Type)? 
+    (effects=EffectSignature)?
     block=Block;
 
 ParameterDeclaration:
     name=Identifier 
-    ":" 
-    type=Type;
+    (":" type=Type)?;
 
 Block:
     "{" 
@@ -146,7 +148,7 @@ TypeAliasDeclaration:
     parameters=TypeParameterList? 
     "=" 
     aliasType=Type 
-    ";";
+    ";"?;
 
 TypeclassDeclaration:
     (exported?="export")? 
@@ -162,6 +164,39 @@ TypeclassProperty:
     ":" 
     type=Type;
 
+EffectDeclaration:
+    (exported?="export")? 
+    "effect" 
+    name=Identifier 
+    parameters=TypeParameterList? 
+    "{" 
+    (operations+=EffectOperation)* 
+    "}";
+
+EffectOperation:
+    name=Identifier 
+    ":" 
+    type=Type;
+
+InstanceDeclaration:
+    (exported?="export")? 
+    "instance" 
+    name=Identifier 
+    ":" 
+    typeclass=TypeReference
+    ("extends" extends+=InstanceReference ("," extends+=InstanceReference)*)?
+    "{" 
+    (implementations+=InstanceImplementation)* 
+    "}";
+
+EffectSignature:
+    "{" 
+    (
+        effects+=TypeReference 
+        ("," effects+=TypeReference)*
+    )? 
+    "}";
+
 InstanceExpression:
     "instance" 
     typeclass=TypeReference
@@ -171,7 +206,8 @@ InstanceExpression:
     "}";
 
 InstanceImplementation:
-    name=Identifier ":" value=Expression;
+    name=Identifier ":" value=Expression |
+    name=Identifier "(" parameters+=ParameterDeclaration ("," parameters+=ParameterDeclaration)* ")" "=>" value=Expression;
 
 InstanceReference:
     instance=Identifier;
@@ -205,7 +241,15 @@ ElseClause:
 // Expressions
 // =============================================
 Expression:
-    EqualityExpression;
+    WithExpression;
+
+WithExpression:
+    EqualityExpression 
+    (
+        {infer WithExpression.computation=current} 
+        "with" 
+        handler=EqualityExpression
+    )?;
 
 EqualityExpression:
     ComparisonExpression 
@@ -291,6 +335,7 @@ PrimaryExpression:
     MemberExpression |
     MatchExpression |
     InstanceExpression |
+    HandlerExpression |
     "(" Expression ")";
 
 // =============================================
@@ -323,7 +368,8 @@ FunctionExpression:
         ("," parameters+=ParameterDeclaration)*
     )? 
     ")" 
-    (":" returnType=Type)? 
+    (":" returnType=Type)?
+    (effects=EffectSignature)?
     (
         ("=>" body=Expression) |
         body=Block
@@ -350,6 +396,31 @@ MatchCase:
 
 GuardExpression:
     "if" condition=Expression;
+
+// =============================================
+// Handler Expression
+// =============================================
+HandlerExpression:
+    "handle" 
+    effect=TypeReference
+    "{" 
+    (bindings+=LetDeclaration)*
+    (
+        handlers+=OperationHandler 
+        ("," handlers+=OperationHandler)*
+    )?
+    "}";
+
+OperationHandler:
+    operation=Identifier 
+    "(" 
+    (
+        parameters+=Identifier 
+        ("," parameters+=Identifier)*
+    )? 
+    ")" 
+    "=>" 
+    body=Expression;
 
 Pattern:
     TypedPattern;
@@ -511,7 +582,8 @@ FunctionType:
     )? 
     ")" 
     "=>" 
-    returnType=Type;
+    returnType=Type
+    (effects=EffectSignature)?;
 
 FunctionTypeParameter:
     (name=Identifier ":")? 
