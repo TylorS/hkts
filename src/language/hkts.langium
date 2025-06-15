@@ -162,6 +162,20 @@ TypeclassProperty:
     ":" 
     type=Type;
 
+InstanceExpression:
+    "instance" 
+    typeclass=TypeReference
+    ("extends" extends+=InstanceReference ("," extends+=InstanceReference)*)?
+    "{" 
+    (implementations+=InstanceImplementation)* 
+    "}";
+
+InstanceImplementation:
+    name=Identifier ":" value=Expression;
+
+InstanceReference:
+    instance=Identifier;
+
 // =============================================
 // Control Flow Statements
 // =============================================
@@ -276,6 +290,7 @@ PrimaryExpression:
     CallExpression |
     MemberExpression |
     MatchExpression |
+    InstanceExpression |
     "(" Expression ")";
 
 // =============================================

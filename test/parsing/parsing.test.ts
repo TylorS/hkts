@@ -5932,6 +5932,482 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("Instance Expressions", () => {
+    it("parses simple instance expression", async () => {
+      const statements = await snapshotTest(`
+        let StringShow = instance Show<String> {
+          show: fun(value: String): String => value
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "InstanceDeclaration",
+            "exported": false,
+            "implementations": [
+              {
+                "$type": "InstanceImplementation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "show",
+                },
+                "value": {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "Identifier",
+                    "id": "value",
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "value",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "String",
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                },
+              },
+            ],
+            "name": {
+              "$type": "Identifier",
+              "id": "StringShow",
+            },
+            "typeclass": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Show",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "PrimitiveType",
+                    "name": "String",
+                  },
+                ],
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses instance declaration with multiple implementations", async () => {
+      const statements = await snapshotTest(`
+        instance IntOrd: Ord<Int> {
+          compare: fun(a: Int, b: Int): Int => a - b
+          lessThan: fun(a: Int, b: Int): Boolean => a < b
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "InstanceDeclaration",
+            "exported": false,
+            "implementations": [
+              {
+                "$type": "InstanceImplementation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "compare",
+                },
+                "value": {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "a",
+                    },
+                    "operator": {
+                      "$type": "SubtractionOperator",
+                      "text": "-",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "b",
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Int",
+                      },
+                    },
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Int",
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Int",
+                  },
+                },
+              },
+              {
+                "$type": "InstanceImplementation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "lessThan",
+                },
+                "value": {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "a",
+                    },
+                    "operator": {
+                      "$type": "ComparisonOperator",
+                      "operator": {
+                        "$type": "LessThanOperator",
+                        "text": "<",
+                      },
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "b",
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Int",
+                      },
+                    },
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Int",
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              },
+            ],
+            "name": {
+              "$type": "Identifier",
+              "id": "IntOrd",
+            },
+            "typeclass": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Ord",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "PrimitiveType",
+                    "name": "Int",
+                  },
+                ],
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses exported instance declaration", async () => {
+      const statements = await snapshotTest(`
+        export instance ArrayFunctor: Functor<Array> {
+          map: fun(f: (a: A) => B, arr: Array<A>): Array<B> => arr.map(f)
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "InstanceDeclaration",
+            "exported": true,
+            "implementations": [
+              {
+                "$type": "InstanceImplementation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "map",
+                },
+                "value": {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "Identifier",
+                        "id": "f",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "MemberExpression",
+                      "object": {
+                        "$type": "Identifier",
+                        "id": "arr",
+                      },
+                      "property": {
+                        "$type": "Identifier",
+                        "id": "map",
+                      },
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "f",
+                      },
+                      "type": {
+                        "$type": "FunctionType",
+                        "parameters": [
+                          {
+                            "$type": "FunctionTypeParameter",
+                            "name": {
+                              "$type": "Identifier",
+                              "id": "a",
+                            },
+                            "type": {
+                              "$type": "TypeReference",
+                              "name": {
+                                "$type": "Identifier",
+                                "id": "A",
+                              },
+                            },
+                          },
+                        ],
+                        "returnType": {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "B",
+                          },
+                        },
+                      },
+                    },
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "arr",
+                      },
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Array",
+                        },
+                        "typeArguments": {
+                          "$type": "TypeArgumentList",
+                          "arguments": [
+                            {
+                              "$type": "TypeReference",
+                              "name": {
+                                "$type": "Identifier",
+                                "id": "A",
+                              },
+                            },
+                          ],
+                        },
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Array",
+                    },
+                    "typeArguments": {
+                      "$type": "TypeArgumentList",
+                      "arguments": [
+                        {
+                          "$type": "TypeReference",
+                          "name": {
+                            "$type": "Identifier",
+                            "id": "B",
+                          },
+                        },
+                      ],
+                    },
+                  },
+                },
+              },
+            ],
+            "name": {
+              "$type": "Identifier",
+              "id": "ArrayFunctor",
+            },
+            "typeclass": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Functor",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Array",
+                    },
+                  },
+                ],
+              },
+            },
+          },
+        ]
+      `);
+    });
+    it("parses instance declaration with simple expression values", async () => {
+      const statements = await snapshotTest(`
+        instance BooleanSemigroup: Semigroup<Boolean> {
+          combine: fun(a: Boolean, b: Boolean): Boolean => a == b
+          isEmpty: true
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "InstanceDeclaration",
+            "exported": false,
+            "implementations": [
+              {
+                "$type": "InstanceImplementation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "combine",
+                },
+                "value": {
+                  "$type": "FunctionExpression",
+                  "body": {
+                    "$type": "BinaryExpression",
+                    "left": {
+                      "$type": "Identifier",
+                      "id": "a",
+                    },
+                    "operator": {
+                      "$type": "EqualityOperator",
+                      "text": "==",
+                    },
+                    "right": {
+                      "$type": "Identifier",
+                      "id": "b",
+                    },
+                  },
+                  "parameters": [
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "a",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Boolean",
+                      },
+                    },
+                    {
+                      "$type": "ParameterDeclaration",
+                      "name": {
+                        "$type": "Identifier",
+                        "id": "b",
+                      },
+                      "type": {
+                        "$type": "PrimitiveType",
+                        "name": "Boolean",
+                      },
+                    },
+                  ],
+                  "returnType": {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                },
+              },
+              {
+                "$type": "InstanceImplementation",
+                "name": {
+                  "$type": "Identifier",
+                  "id": "isEmpty",
+                },
+                "value": {
+                  "$type": "BooleanLiteral",
+                  "text": "true",
+                },
+              },
+            ],
+            "name": {
+              "$type": "Identifier",
+              "id": "BooleanSemigroup",
+            },
+            "typeclass": {
+              "$type": "TypeReference",
+              "name": {
+                "$type": "Identifier",
+                "id": "Semigroup",
+              },
+              "typeArguments": {
+                "$type": "TypeArgumentList",
+                "arguments": [
+                  {
+                    "$type": "PrimitiveType",
+                    "name": "Boolean",
+                  },
+                ],
+              },
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   describe("Pattern Matching", () => {
     it("parses simple match expression with literal patterns", async () => {
       const statements = await snapshotTest(`
