@@ -1010,6 +1010,221 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("unary operators", () => {
+    it("parses prefix increment operator", async () => {
+      const statements = await snapshotTest(`
+        ++x;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "PrefixUnaryExpression",
+              "operand": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+              "operator": {
+                "$type": "IncrementOperator",
+                "text": "++",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses prefix decrement operator", async () => {
+      const statements = await snapshotTest(`
+        --y;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "PrefixUnaryExpression",
+              "operand": {
+                "$type": "Identifier",
+                "id": "y",
+              },
+              "operator": {
+                "$type": "DecrementOperator",
+                "text": "--",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses postfix increment operator", async () => {
+      const statements = await snapshotTest(`
+        x++;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "PostfixUnaryExpression",
+              "operand": {
+                "$type": "Identifier",
+                "id": "x",
+              },
+              "operator": {
+                "$type": "IncrementOperator",
+                "text": "++",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses postfix decrement operator", async () => {
+      const statements = await snapshotTest(`
+        y--;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ExpressionStatement",
+            "expression": {
+              "$type": "PostfixUnaryExpression",
+              "operand": {
+                "$type": "Identifier",
+                "id": "y",
+              },
+              "operator": {
+                "$type": "DecrementOperator",
+                "text": "--",
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses unary operators in expressions", async () => {
+      const statements = await snapshotTest(`
+        let result = ++x + y--;
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "LetDeclaration",
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "result",
+            },
+            "value": {
+              "$type": "BinaryExpression",
+              "left": {
+                "$type": "PrefixUnaryExpression",
+                "operand": {
+                  "$type": "Identifier",
+                  "id": "x",
+                },
+                "operator": {
+                  "$type": "IncrementOperator",
+                  "text": "++",
+                },
+              },
+              "operator": {
+                "$type": "AdditionOperator",
+                "text": "+",
+              },
+              "right": {
+                "$type": "PostfixUnaryExpression",
+                "operand": {
+                  "$type": "Identifier",
+                  "id": "y",
+                },
+                "operator": {
+                  "$type": "DecrementOperator",
+                  "text": "--",
+                },
+              },
+            },
+          },
+        ]
+      `);
+    });
+
+    it("parses unary operators in for loop", async () => {
+      const statements = await snapshotTest(`
+        for (item of items) {
+          ++count;
+          item.value--;
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ForOfStatement",
+            "body": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ExpressionStatement",
+                  "expression": {
+                    "$type": "PrefixUnaryExpression",
+                    "operand": {
+                      "$type": "Identifier",
+                      "id": "count",
+                    },
+                    "operator": {
+                      "$type": "IncrementOperator",
+                      "text": "++",
+                    },
+                  },
+                },
+                {
+                  "$type": "ExpressionStatement",
+                  "expression": {
+                    "$type": "PostfixUnaryExpression",
+                    "operand": {
+                      "$type": "MemberExpression",
+                      "object": {
+                        "$type": "Identifier",
+                        "id": "item",
+                      },
+                      "property": {
+                        "$type": "Identifier",
+                        "id": "value",
+                      },
+                    },
+                    "operator": {
+                      "$type": "DecrementOperator",
+                      "text": "--",
+                    },
+                  },
+                },
+              ],
+            },
+            "iterable": {
+              "$type": "Identifier",
+              "id": "items",
+            },
+            "variable": {
+              "$type": "Identifier",
+              "id": "item",
+            },
+          },
+        ]
+      `);
+    });
+  });
+
   describe("let declarations", () => {
     it("parses simple let declaration", async () => {
       const statements = await snapshotTest(`
@@ -8432,7 +8647,7 @@ describe("Parsing tests", () => {
 
     it("parses complex effect system example", async () => {
       const statements = await snapshotTest(`
-        let StateHandler = fun (initialValue) => handle State<Int> {
+        let StateHandler = fun (initialValue: Int) => handle State<Int> {
           let ref = Ref(initialValue)
           get() => ref.get(),
           put(newValue) => ref.set(newValue)
@@ -8558,6 +8773,10 @@ describe("Parsing tests", () => {
                   "name": {
                     "$type": "Identifier",
                     "id": "initialValue",
+                  },
+                  "type": {
+                    "$type": "PrimitiveType",
+                    "name": "Int",
                   },
                 },
               ],

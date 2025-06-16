@@ -290,12 +290,23 @@ AdditiveExpression:
     )*;
 
 MultiplicativeExpression:
-    PrimaryExpression 
+    UnaryExpression 
     (
         {infer BinaryExpression.left=current} 
         operator=(MultiplicationOperator | DivisionOperator) 
-        right=PrimaryExpression
+        right=UnaryExpression
     )*;
+
+UnaryExpression:
+    PrefixUnaryExpression | PostfixUnaryExpression | PrimaryExpression;
+
+PrefixUnaryExpression:
+    operator=(IncrementOperator | DecrementOperator) 
+    operand=PrimaryExpression;
+
+PostfixUnaryExpression:
+    operand=PrimaryExpression 
+    operator=(IncrementOperator | DecrementOperator);
 
 // =============================================
 // Operators
@@ -335,6 +346,12 @@ LessThanOrEqualOperator:
 
 GreaterThanOrEqualOperator:
     text='>=';
+
+IncrementOperator:
+    text='++';
+
+DecrementOperator:
+    text='--';
 
 // =============================================
 // Primary Expressions
