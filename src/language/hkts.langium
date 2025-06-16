@@ -543,7 +543,15 @@ Property:
 // Types
 // =============================================
 Type:
-    PostfixType;
+    UnionType | IntersectionType | PostfixType;
+
+UnionType:
+    types+=(PostfixType | IntersectionType) 
+    ("|" types+=(IntersectionType | PostfixType))+;
+
+IntersectionType:
+    types+=PostfixType 
+    ("&" types+=PostfixType)+;
 
 TypeParameterList:
     "<" 

@@ -8595,6 +8595,74 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("union types", () => {
+    it("parses union types", async () => {
+      const statements = await snapshotTest(`
+        type MyType = Int | String
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "UnionType",
+              "types": [
+                {
+                  "$type": "PrimitiveType",
+                  "name": "Int",
+                },
+                {
+                  "$type": "PrimitiveType",
+                  "name": "String",
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "MyType",
+            },
+          },
+        ]
+      `)
+    });
+  })
+
+  describe("intersection types", () => {
+    it("parses intersection types", async () => {
+      const statements = await snapshotTest(`
+        type MyType = Int & String
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "TypeAliasDeclaration",
+            "aliasType": {
+              "$type": "IntersectionType",
+              "types": [
+                {
+                  "$type": "PrimitiveType",
+                  "name": "Int",
+                },
+                {
+                  "$type": "PrimitiveType",
+                  "name": "String",
+                },
+              ],
+            },
+            "exported": false,
+            "name": {
+              "$type": "Identifier",
+              "id": "MyType",
+            },
+          },
+        ]
+      `)
+    });
+  });
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
