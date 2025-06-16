@@ -15,6 +15,8 @@ Statement:
     Declaration |
     ReturnStatement |
     IfStatement |
+    ForOfStatement |
+    WhileStatement |
     ExpressionStatement;
 
 ExpressionStatement:
@@ -234,6 +236,20 @@ ElseIfClause:
 ElseClause:
     "else" 
     block=Block;
+
+ForOfStatement:
+    "for" 
+    "(" 
+    variable=Identifier 
+    "of" 
+    iterable=Expression 
+    ")" 
+    body=Block;
+
+WhileStatement:
+    "while" 
+    "(" condition=Expression ")" 
+    body=Block;
 
 // =============================================
 // Expressions

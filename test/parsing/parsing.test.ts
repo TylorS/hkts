@@ -8663,6 +8663,109 @@ describe("Parsing tests", () => {
     });
   });
 
+  describe("for of statement", () => {
+    it("parses for of statement", async () => {
+      const statements = await snapshotTest(`
+        for (i of [1, 2, 3]) {
+          print(i)
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "ForOfStatement",
+            "body": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ExpressionStatement",
+                  "expression": {
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "Identifier",
+                        "id": "i",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "Identifier",
+                      "id": "print",
+                    },
+                  },
+                },
+              ],
+            },
+            "iterable": {
+              "$type": "ArrayLiteral",
+              "elements": [
+                {
+                  "$type": "IntegerLiteral",
+                  "text": "1",
+                },
+                {
+                  "$type": "IntegerLiteral",
+                  "text": "2",
+                },
+                {
+                  "$type": "IntegerLiteral",
+                  "text": "3",
+                },
+              ],
+            },
+            "variable": {
+              "$type": "Identifier",
+              "id": "i",
+            },
+          },
+        ]
+      `)
+    });
+  });
+
+  describe("while statement", () => { 
+    it("parses while statement", async () => {
+      const statements = await snapshotTest(`
+        while (condition) {
+          print("Hello, world!")
+        }
+      `);
+
+      expect(statements).toMatchInlineSnapshot(`
+        [
+          {
+            "$type": "WhileStatement",
+            "body": {
+              "$type": "Block",
+              "statements": [
+                {
+                  "$type": "ExpressionStatement",
+                  "expression": {
+                    "$type": "CallExpression",
+                    "arguments": [
+                      {
+                        "$type": "StringLiteral",
+                        "text": "Hello, world!",
+                      },
+                    ],
+                    "callee": {
+                      "$type": "Identifier",
+                      "id": "print",
+                    },
+                  },
+                },
+              ],
+            },
+            "condition": {
+              "$type": "Identifier",
+              "id": "condition",
+            },
+          },
+        ]
+      `)
+    });
+  })
+
   async function snapshotTest(source: string) {
     const document = await parse(source);
 
