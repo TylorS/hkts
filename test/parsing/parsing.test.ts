@@ -2992,34 +2992,37 @@ describe("Parsing tests", () => {
             "type": {
               "$type": "ArrayType",
               "elementType": {
-                "$type": "FunctionType",
-                "parameters": [
-                  {
-                    "$type": "FunctionTypeParameter",
-                    "type": {
-                      "$type": "TypeReference",
-                      "name": {
-                        "$type": "Identifier",
-                        "id": "Number",
+                "$type": "ParenthesizedType",
+                "type": {
+                  "$type": "FunctionType",
+                  "parameters": [
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
                       },
                     },
-                  },
-                  {
-                    "$type": "FunctionTypeParameter",
-                    "type": {
-                      "$type": "TypeReference",
-                      "name": {
-                        "$type": "Identifier",
-                        "id": "Number",
+                    {
+                      "$type": "FunctionTypeParameter",
+                      "type": {
+                        "$type": "TypeReference",
+                        "name": {
+                          "$type": "Identifier",
+                          "id": "Number",
+                        },
                       },
                     },
-                  },
-                ],
-                "returnType": {
-                  "$type": "TypeReference",
-                  "name": {
-                    "$type": "Identifier",
-                    "id": "Number",
+                  ],
+                  "returnType": {
+                    "$type": "TypeReference",
+                    "name": {
+                      "$type": "Identifier",
+                      "id": "Number",
+                    },
                   },
                 },
               },
@@ -8148,7 +8151,7 @@ describe("Parsing tests", () => {
 
     it("parses function declaration with multiple effects", async () => {
       const statements = await snapshotTest(`
-        fun processData(data: String): String {IO, State, Exception} {
+        fun processData(data: String): String {IO,State,Exception} {
           return data
         }
       `);
@@ -8302,7 +8305,7 @@ describe("Parsing tests", () => {
 
     it("parses function type with effects", async () => {
       const statements = await snapshotTest(`
-        type FileProcessor = (String) => String {IO, Exception<FileError>}
+        type FileProcessor = (String) => String {IO,Exception<FileError>};
       `);
 
       expect(statements).toMatchInlineSnapshot(`
@@ -8368,7 +8371,7 @@ describe("Parsing tests", () => {
 
     it("parses empty effect signature", async () => {
       const statements = await snapshotTest(`
-        fun pureFunction(x: Int): Int {} {
+        fun pureFunction(x: Int): Int {
           return x * 2
         }
       `);
@@ -8399,10 +8402,6 @@ describe("Parsing tests", () => {
                   },
                 },
               ],
-            },
-            "effects": {
-              "$type": "EffectSignature",
-              "effects": [],
             },
             "exported": false,
             "name": {

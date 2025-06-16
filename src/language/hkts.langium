@@ -178,6 +178,12 @@ EffectOperation:
     ":" 
     type=Type;
 
+EffectSignature:
+    "{"
+    effects+=TypeReference 
+    ("," effects+=TypeReference)*
+    "}";
+
 InstanceDeclaration:
     (exported?="export")? 
     "instance" 
@@ -187,14 +193,6 @@ InstanceDeclaration:
     ("extends" extends+=InstanceReference ("," extends+=InstanceReference)*)?
     "{" 
     (implementations+=InstanceImplementation)* 
-    "}";
-
-EffectSignature:
-    "{" 
-    (
-        effects+=TypeReference 
-        ("," effects+=TypeReference)*
-    )? 
     "}";
 
 InstanceExpression:
@@ -491,7 +489,9 @@ FieldPattern:
 // Literals
 // =============================================
 Identifier:
-    id=ID;
+    id=ID | 
+    // Keywords should also be able to be used as identifiers
+    id=('data'|'fun'|'let'|'type'|'typeclass'|'effect'|'instance'|'export'|'return'|'if'|'else'|'match'|'handle'|'with'|'extends');
 
 Literal:
     BooleanLiteral |
@@ -572,7 +572,10 @@ PrimaryType:
     ObjectType |
     TupleType |
     TypeHole |
-    "(" Type ")";
+    ParenthesizedType;
+
+ParenthesizedType:
+    "(" type=Type ")";
 
 FunctionType:
     "(" 
@@ -679,6 +682,9 @@ TypeHole:
 terminal BOOLEAN: 
     /true|false/;
 
+terminal ID: 
+    /[a-zA-Z_][a-zA-Z0-9_]*/;
+
 terminal STRING: 
     /"[^"]*"/ | 
     /'[^']*'/;
@@ -694,9 +700,6 @@ terminal FLOAT:
 
 terminal INTEGER: 
     /[0-9]+/;
-
-terminal ID: 
-    /[a-zA-Z_][a-zA-Z0-9_]*/;
 
 terminal SINGLE_LINE_COMMENT: 
     /\/\/[^\n\r]*/;
