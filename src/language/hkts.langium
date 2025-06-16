@@ -507,7 +507,7 @@ FieldPattern:
 Identifier:
     id=ID | 
     // Keywords should also be able to be used as identifiers
-    id=('data'|'fun'|'let'|'type'|'typeclass'|'effect'|'instance'|'export'|'return'|'if'|'else'|'match'|'handle'|'with'|'extends');
+    id=('data'|'effect'|'else'|'export'|'extends'|'for'|'fun'|'handle'|'if'|'instance'|'let'|'match'|'return'|'type'|'typeclass'|'while'|'with');
 
 Literal:
     BooleanLiteral |
