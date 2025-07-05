@@ -1,6 +1,6 @@
 import { assertEquals } from "https://deno.land/std@0.208.0/assert/mod.ts";
 import { ConstraintSolver } from "./ConstraintSolver.ts";
-import { EqualityConstraint } from "./Constraints.ts";
+import { EqualityConstraint, ExistentialConstraint } from "./Constraints.ts";
 import { Span, SpanLocation } from "../parse/Span.ts";
 import * as F from '../parse/factories.ts'
 import { Variance } from "../parse/Type.ts";
@@ -483,4 +483,259 @@ Deno.test("ConstraintSolver / Equality", async (t) => {
     assertEquals(success, true);
     assertEquals(solver.resolve(tv), mapType);
   });
-}); 
+});
+
+Deno.test("ConstraintSolver / Existential", async (t) => {
+  await t.step("Simple existential constraint", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    // ∃α. α = Int
+    const innerConstraint = new EqualityConstraint(existentialVar, intType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with nested equality", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    // ∃α. α = Int
+    const innerConstraint = new EqualityConstraint(existentialVar, intType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with complex types", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const arrayType = F.arrayType({ elementType: intType });
+    // ∃α. α = Array<Int>
+    const innerConstraint = new EqualityConstraint(existentialVar, arrayType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Nested existential constraints", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar1 = solver.fresh(DUMMY_SPAN);
+    const existentialVar2 = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    // ∃α. ∃β. (α = Int) ∧ (β = String)
+    const innerConstraint1 = new EqualityConstraint(existentialVar1, intType, DUMMY_SPAN);
+    const innerConstraint2 = new EqualityConstraint(existentialVar2, stringType, DUMMY_SPAN);
+    const existentialConstraint2 = new ExistentialConstraint(existentialVar2, innerConstraint2, DUMMY_SPAN);
+    const existentialConstraint1 = new ExistentialConstraint(existentialVar1, innerConstraint1, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint1);
+    solver.addConstraint(existentialConstraint2);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with function types", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    const functionType = F.functionType({
+      parameters: [
+        F.functionParameterType({ type: intType, name: F.identifier({ name: "x" }) }),
+      ],
+      returnType: stringType
+    });
+    // ∃α. α = (Int -> String)
+    const innerConstraint = new EqualityConstraint(existentialVar, functionType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with record types", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    const recordType = F.recordType({
+      fields: [
+        F.recordFieldType({ name: F.identifier({ name: "x" }), type: intType }),
+        F.recordFieldType({ name: F.identifier({ name: "y" }), type: stringType }),
+      ]
+    });
+    // ∃α. α = { x: Int, y: String }
+    const innerConstraint = new EqualityConstraint(existentialVar, recordType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with intersection types", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    const intersectionType = F.intersectionType({
+      types: [intType, stringType]
+    });
+    // ∃α. α = Int & String
+    const innerConstraint = new EqualityConstraint(existentialVar, intersectionType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with tagged union types", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    const taggedUnionType = F.taggedUnionType({
+      name: F.identifier({ name: 'IntOrString' }),
+      types: [
+        F.tupleConstructorType({ name: F.identifier({ name: "Int" }), elements: [intType] }),
+        F.tupleConstructorType({ name: F.identifier({ name: "String" }), elements: [stringType] }),
+      ]
+    });
+    // ∃α. α = IntOrString
+    const innerConstraint = new EqualityConstraint(existentialVar, taggedUnionType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with type references", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const typeRef = F.typeReference({
+      name: F.identifier({ name: "Option" }),
+      typeArguments: [intType]
+    });
+    // ∃α. α = Option<Int>
+    const innerConstraint = new EqualityConstraint(existentialVar, typeRef, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with nested type references", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    const optionInt = F.typeReference({
+      name: F.identifier({ name: "Option" }),
+      typeArguments: [intType]
+    });
+    const listString = F.typeReference({
+      name: F.identifier({ name: "List" }),
+      typeArguments: [stringType]
+    });
+    const mapType = F.typeReference({
+      name: F.identifier({ name: "Map" }),
+      typeArguments: [optionInt, listString]
+    });
+    // ∃α. α = Map<Option<Int>, List<String>>
+    const innerConstraint = new EqualityConstraint(existentialVar, mapType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with type variables", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    // ∃α. α = Int
+    const innerConstraint = new EqualityConstraint(existentialVar, intType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with type mismatch", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    // ∃α. α = Int ∧ α = String - This should fail
+    const innerConstraint = new EqualityConstraint(intType, stringType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, false);
+    assertEquals(solver.getErrors().length > 0, true);
+  });
+
+  await t.step("Existential with variance", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN, Variance.Covariant);
+    const intType = F.integerType({});
+    // ∃α: covariant. α = Int
+    const innerConstraint = new EqualityConstraint(existentialVar, intType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with tuple types", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    const tupleType = F.tupleType({
+      elements: [intType, stringType]
+    });
+    // ∃α. α = [Int, String]
+    const innerConstraint = new EqualityConstraint(existentialVar, tupleType, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Existential with type holes", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar = solver.fresh(DUMMY_SPAN);
+    const typeHole = F.typeHole({ variance: Variance.Covariant });
+    // ∃α. α = ?
+    const innerConstraint = new EqualityConstraint(existentialVar, typeHole, DUMMY_SPAN);
+    const existentialConstraint = new ExistentialConstraint(existentialVar, innerConstraint, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+
+  await t.step("Multiple existential constraints", () => {
+    const solver = new ConstraintSolver();
+    const existentialVar1 = solver.fresh(DUMMY_SPAN);
+    const existentialVar2 = solver.fresh(DUMMY_SPAN);
+    const intType = F.integerType({});
+    const stringType = F.stringType({});
+    // ∃α. α = Int
+    const innerConstraint1 = new EqualityConstraint(existentialVar1, intType, DUMMY_SPAN);
+    const existentialConstraint1 = new ExistentialConstraint(existentialVar1, innerConstraint1, DUMMY_SPAN);
+    // ∃β. β = String
+    const innerConstraint2 = new EqualityConstraint(existentialVar2, stringType, DUMMY_SPAN);
+    const existentialConstraint2 = new ExistentialConstraint(existentialVar2, innerConstraint2, DUMMY_SPAN);
+    solver.addConstraint(existentialConstraint1);
+    solver.addConstraint(existentialConstraint2);
+    const success = solver.solve();
+    assertEquals(success, true);
+  });
+});

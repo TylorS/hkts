@@ -38,6 +38,20 @@ export class ConstraintSolver {
 		let iterations = 0;
 		const maxIterations = 1000; // Prevent infinite loops
 
+		// First, process all existential constraints
+		const existentialConstraints = this.constraints.filter(c => c.kind === "ExistentialConstraint");
+		const nonExistentialConstraints = this.constraints.filter(c => c.kind !== "ExistentialConstraint");
+		
+		// Process existential constraints
+		for (const constraint of existentialConstraints) {
+			if (constraint.kind === "ExistentialConstraint") {
+				this.solveExistential(constraint.typeVariable, constraint.innerConstraint);
+			}
+		}
+		
+		// Replace constraints with only non-existential ones
+		this.constraints = nonExistentialConstraints;
+
 		while (changed && iterations < maxIterations) {
 			changed = false;
 			iterations++;
@@ -61,6 +75,8 @@ export class ConstraintSolver {
 		switch (constraint.kind) {
 			case "EqualityConstraint":
 				return this.solveEquality(constraint.left, constraint.right);
+			case "ExistentialConstraint":
+				return this.solveExistential(constraint.typeVariable, constraint.innerConstraint);
 			default:
 				// For now, return false for unsupported constraints
 				return false;
@@ -306,5 +322,242 @@ export class ConstraintSolver {
 
 	private addError(message: string): void {
 		this.errors.push(message);
+	}
+
+	/**
+	 * Solves existential constraints: ∃α. C
+	 * 
+	 * Existential constraints introduce a local type variable that exists
+	 * only within the scope of the inner constraint. The solver:
+	 * 1. Creates a fresh type variable for the existential
+	 * 2. Substitutes the existential variable with the fresh variable in the inner constraint
+	 * 3. Checks if the substituted constraint is satisfiable using a recursive call
+	 * 4. Returns true if satisfiable, false otherwise
+	 * 
+	 * @param typeVariable The existential type variable
+	 * @param innerConstraint The constraint that must hold for some type
+	 * @returns true if the constraint was solved, false otherwise
+	 */
+	private solveExistential(
+		typeVariable: TypeVariable,
+		innerConstraint: Constraint,
+	): boolean {
+		// Create a fresh type variable for the existential
+		const freshVar = this.fresh(typeVariable.span, typeVariable.variance);
+		
+		// Substitute the existential variable with the fresh variable in the inner constraint
+		const substitutedConstraint = this.substituteInConstraint(
+			innerConstraint,
+			typeVariable,
+			freshVar,
+		);
+		
+		// Check satisfiability of the substituted constraint
+		const isSatisfiable = this.isConstraintSatisfiable(substitutedConstraint);
+		
+		if (!isSatisfiable) {
+			this.addError(`Existential constraint is unsatisfiable: ∃${typeVariable}. ${innerConstraint}`);
+			return false;
+		}
+		
+		// If satisfiable, the existential constraint is "solved"
+		return true;
+	}
+
+	/**
+	 * Checks if a constraint is satisfiable without mutating the solver state
+	 * This is used for existential constraints to check satisfiability in isolation
+	 */
+	private isConstraintSatisfiable(constraint: Constraint): boolean {
+		switch (constraint.kind) {
+			case "EqualityConstraint":
+				return this.isEqualitySatisfiable(constraint.left, constraint.right);
+			case "ExistentialConstraint":
+				// Recursive existential check
+				return this.solveExistential(constraint.typeVariable, constraint.innerConstraint);
+			default:
+				// For other constraint types, assume satisfiable for now
+				// We can extend this as needed
+				return true;
+		}
+	}
+
+	/**
+	 * Checks if an equality constraint is satisfiable without mutating solver state
+	 */
+	private isEqualitySatisfiable(
+		left: Type.Type | TypeVariable,
+		right: Type.Type | TypeVariable,
+	): boolean {
+		const resolvedLeft = this.resolve(left);
+		const resolvedRight = this.resolve(right);
+
+		// If both are type variables, they can be unified (satisfiable)
+		if (
+			resolvedLeft.kind === "TypeVariable" &&
+			resolvedRight.kind === "TypeVariable"
+		) {
+			return true;
+		}
+
+		// If one is a type variable, it can be unified with the other (satisfiable)
+		if (resolvedLeft.kind === "TypeVariable" || resolvedRight.kind === "TypeVariable") {
+			return true;
+		}
+
+		// Both are concrete types, check if they're equal
+		return this.areEqual(resolvedLeft, resolvedRight);
+	}
+
+	/**
+	 * Substitutes a type variable with another type in a constraint
+	 * 
+	 * This is used for existential constraint solving where we need to
+	 * replace the existential variable with a fresh variable throughout
+	 * the inner constraint.
+	 * 
+	 * @param constraint The constraint to substitute in
+	 * @param oldVar The type variable to replace
+	 * @param newType The type to replace it with
+	 * @returns A new constraint with the substitution applied
+	 */
+	private substituteInConstraint(
+		constraint: Constraint,
+		oldVar: TypeVariable,
+		newType: Type.Type | TypeVariable,
+	): Constraint {
+		switch (constraint.kind) {
+			case "EqualityConstraint":
+				return {
+					...constraint,
+					left: this.substituteInType(constraint.left, oldVar, newType),
+					right: this.substituteInType(constraint.right, oldVar, newType),
+				};
+			case "ExistentialConstraint":
+				// Don't substitute if this is the same existential variable
+				if (constraint.typeVariable === oldVar) {
+					return constraint;
+				}
+				return {
+					...constraint,
+					innerConstraint: this.substituteInConstraint(
+						constraint.innerConstraint,
+						oldVar,
+						newType,
+					),
+				};
+			default:
+				// For other constraint types, return as-is for now
+				// We can extend this as needed
+				return constraint;
+		}
+	}
+
+	/**
+	 * Substitutes a type variable with another type in a type
+	 * 
+	 * @param type The type to substitute in
+	 * @param oldVar The type variable to replace
+	 * @param newType The type to replace it with
+	 * @returns The type with substitution applied
+	 */
+	private substituteInType(
+		type: Type.Type | TypeVariable,
+		oldVar: TypeVariable,
+		newType: Type.Type | TypeVariable,
+	): Type.Type | TypeVariable {
+		// If this is the variable we're replacing
+		if (type === oldVar) {
+			return newType;
+		}
+
+		// If it's a type variable but not the one we're replacing
+		if (type.kind === "TypeVariable") {
+			return type;
+		}
+
+		// For concrete types, recursively substitute in their components
+		switch (type.kind) {
+			case "ArrayType":
+				return {
+					...type,
+					elementType: this.substituteInType(type.elementType, oldVar, newType) as Type.Type,
+				};
+			case "RecordType":
+				return {
+					...type,
+					fields: type.fields.map((field) => ({
+						...field,
+						type: this.substituteInType(field.type, oldVar, newType) as Type.Type,
+					})),
+				};
+			case "FunctionType":
+				return {
+					...type,
+					parameters: type.parameters.map((param) => ({
+						...param,
+						type: this.substituteInType(param.type, oldVar, newType) as Type.Type,
+					})),
+					returnType: type.returnType
+						? this.substituteInType(type.returnType, oldVar, newType) as Type.Type
+						: null,
+				};
+			case "IntersectionType":
+				return {
+					...type,
+					types: type.types.map((t) => this.substituteInType(t, oldVar, newType) as Type.Type),
+				};
+			case "TaggedUnionType":
+				return {
+					...type,
+					types: type.types.map((t) => {
+						// TaggedType is a union, so we need to handle each case
+						if (t.kind === "VoidConstructorType") {
+							return t; // No substitution needed
+						}
+						if (t.kind === "TupleConstructorType") {
+							return {
+								...t,
+								elements: t.elements.map((element) => {
+									if (element.kind === "RecordFieldType") {
+										return {
+											...element,
+											type: this.substituteInType(element.type, oldVar, newType) as Type.Type,
+										};
+									}
+									return this.substituteInType(element, oldVar, newType) as Type.Type;
+								}),
+							};
+						}
+						if (t.kind === "RecordConstructorType") {
+							return {
+								...t,
+								fields: t.fields.map((field) => ({
+									...field,
+									type: this.substituteInType(field.type, oldVar, newType) as Type.Type,
+								})),
+							};
+						}
+						return t;
+					}),
+				};
+			case "TypeReference":
+				return {
+					...type,
+					typeArguments: type.typeArguments.map((arg) =>
+						this.substituteInType(arg, oldVar, newType) as Type.Type | Type.TypeHole,
+					),
+				};
+			case "TupleType":
+				return {
+					...type,
+					elements: type.elements.map((element) =>
+						this.substituteInType(element, oldVar, newType) as Type.Type,
+					),
+				};
+			default:
+				// For other types (IntegerType, FloatType, etc.), no substitution needed
+				return type;
+		}
 	}
 }
